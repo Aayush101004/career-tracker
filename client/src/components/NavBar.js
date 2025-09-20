@@ -55,20 +55,13 @@ const Navbar = ({ auth, logout }) => {
         </li>
     );
 
-    const guestLinks = (
-        <>
-            <li><Link to="/register">Register</Link></li>
-            <li><Link to="/login">Login</Link></li>
-        </>
-    );
-
     return (
         <nav className="navbar">
             <h1>
                 <Link to="/">Career Project Tracker</Link>
             </h1>
             {/* ADDED a specific className to this ul */}
-            <ul className="navbar-links">{isAuthenticated ? authLinks : guestLinks}</ul>
+            <ul className="navbar-links">{isAuthenticated ? authLinks : ""}</ul>
         </nav>
     );
 };
