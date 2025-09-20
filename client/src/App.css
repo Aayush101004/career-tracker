@@ -627,3 +627,35 @@ select:focus {
   text-transform: capitalize;
   font-weight: normal;
 }
+
+.auth-container p {
+  margin-top: 1.5rem;
+  text-align: center;
+  /* This will center the link text */
+  color: #aaa;
+}
+
+/* This styles the link itself inside that paragraph */
+.auth-container p a {
+  color: #61dafb;
+  font-weight: bold;
+  text-decoration: none;
+  margin-left: 0.5rem;
+}
+
+.auth-container p a:hover {
+  text-decoration: underline;
+}
+
+/* --- Navbar Guest Link Styles --- */
+
+/* This ensures the Register/Login links in the nav have some padding and a hover effect */
+.navbar .navbar-links a {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.navbar .navbar-links a:hover {
+  background-color: #3c3c3c;
+}
