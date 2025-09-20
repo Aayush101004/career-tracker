@@ -17,9 +17,9 @@ const Navbar = ({ auth, logout }) => {
         if (!user) return <FaUser />;
         switch (user.gender) {
             case 'male':
-                return <Man size={24} />;
+                return <Man size={20} />;
             case 'female':
-                return <Female size={24} />;
+                return <Female size={20} />;
             default:
                 return <FaUser />;
         }
