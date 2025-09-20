@@ -1,24 +1,29 @@
 
 function CareerAnalysis({ projects, handleAnalysis, analysisResult, isLoading }) {
     const isButtonDisabled = projects.length < 3;
+    const projectsNeeded = 3 - projects.length;
+
+    // Create the hover message for the button's title attribute
+    const buttonTitle = isButtonDisabled
+        ? `Add ${projectsNeeded} more project(s) to enable analysis.`
+        : 'Analyze your career path';
 
     return (
         <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-            <button onClick={handleAnalysis} disabled={isButtonDisabled}>
+            <button
+                onClick={handleAnalysis}
+                disabled={isButtonDisabled}
+                title={buttonTitle}
+            >
                 Analyze Career Path
             </button>
-            {isButtonDisabled && (
-                <p style={{ fontSize: '0.8rem', color: '#666' }}>
-                    Add {3 - projects.length} more project(s) to enable analysis.
-                </p>
-            )}
 
             {isLoading && <p style={{ marginTop: '1rem' }}>Analyzing...</p>}
 
             {analysisResult && (
-                <div style={{ marginTop: '1.5rem', padding: '1rem', border: '1px solid #61dafb', borderRadius: '5px' }}>
+                <div className="analysis-result">
                     <h3>Suggested Career Path:</h3>
-                    <p style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>{analysisResult}</p>
+                    <p>{analysisResult}</p>
                 </div>
             )}
         </div>

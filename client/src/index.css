@@ -5,6 +5,10 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* Dark Mode Styles */
+  background-color: #121212;
+  color: rgba(255, 255, 255, 0.87);
 }
 
 code {

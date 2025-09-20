@@ -1,8 +1,9 @@
 import axios from 'axios';
 
+// No changes to logic, just applying a CSS class
 function ProjectList({ projects, fetchProjects }) {
     const deleteProject = (id) => {
-        axios.delete(`http://localhost:5001/projects/${id}`)
+        axios.delete(`/projects/${id}`)
             .then(res => {
                 console.log(res.data);
                 fetchProjects(); // Refresh the list after deleting
@@ -18,21 +19,24 @@ function ProjectList({ projects, fetchProjects }) {
         <div>
             <h3>My Projects</h3>
             {projects.map(project => (
-                <div key={project._id} style={{ border: '1px solid #ccc', padding: '1rem', margin: '1rem 0' }}>
+                <div key={project._id} className="project-card">
                     <h4>{project.title}</h4>
-                    <p>{project.description}</p>
-                    <strong>Technologies:</strong> {project.technologies.join(', ')}
-
-                    {/* Add this block to conditionally render the link */}
-                    {project.githubLink && (
-                        <div style={{ marginTop: '0.5rem' }}>
-                            <a href={project.githubLink} target="_blank" rel="noopener noreferrer">
+                    <div className="accordion-content">
+                        <p><strong>Description:</strong><br /> {project.description}</p>
+                        <p><strong>Technologies:</strong><br /> {project.technologies.join(', ')}</p>
+                        {project.githubLink &&
+                            <a
+                                href={project.githubLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="github-btn" // Apply the new button class here
+                            >
                                 View on GitHub
                             </a>
-                        </div>
-                    )}
+                        }
+                    </div>
 
-                    <button onClick={() => deleteProject(project._id)} style={{ marginTop: '0.5rem' }}>Delete</button>
+                    <button onClick={() => deleteProject(project._id)} style={{ marginTop: '1rem' }}>Delete</button>
                 </div>
             ))}
         </div>

@@ -1,63 +1,129 @@
-// src/App.js
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { jwtDecode } from 'jwt-decode';
+import { Fragment, useEffect, useState } from 'react';
+import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
-import AddProjectForm from './components/AddProjectForm';
-import ProjectList from './components/ProjectList';
-import CareerAnalysis from './components/careerAnalysis'; // 1. Import the new component
-import { analyzeCareers } from './utils/careerAnalyzer';
+import Login from './components/Login';
+import MainTracker from './components/MainTracker';
+import Navbar from './components/NavBar';
+import ProfilePage from './components/ProfilePage';
+import Register from './components/Register';
+import setAuthToken from './utils/setAuthToken';
+
+// A wrapper for routes that require a logged-in user
+const PrivateRoute = ({ auth, children }) => {
+  if (auth.loading) {
+    return <div>Loading...</div>; // Or a spinner component
+  }
+  return auth.isAuthenticated ? children : <Navigate to="/login" />;
+};
 
 function App() {
-  const [projects, setProjects] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [analysisResult, setAnalysisResult] = useState('');
+  const [auth, setAuth] = useState({
+    token: localStorage.getItem('token'),
+    isAuthenticated: null,
+    loading: true,
+    user: null
+  });
 
-  const fetchProjects = () => {
-    axios.get('http://localhost:5001/projects')
-      .then(response => {
-        setProjects(response.data);
-      })
-      .catch(error => {
-        console.error("There was an error fetching the projects!", error);
+  // This will now also hold the detailed user data for the profile page
+  const [userData, setUserData] = useState(null);
+
+  const loadUser = () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setAuthToken(token);
+      try {
+        const decoded = jwtDecode(token);
+        setAuth({
+          token,
+          isAuthenticated: true,
+          loading: false,
+          user: decoded.user
+        });
+        // Fetch detailed user data after confirming authentication
+        fetchUserData();
+      } catch (error) {
+        // Handle invalid token
+        logout();
+      }
+    } else {
+      setAuth({
+        token: null,
+        isAuthenticated: false,
+        loading: false,
+        user: null
       });
+    }
   };
 
-  // useEffect hook to fetch data when the component mounts
+  // Central function to fetch user data
+  const fetchUserData = async () => {
+    if (localStorage.getItem('token')) {
+      try {
+        const res = await axios.get('/api/users/me');
+        setUserData(res.data);
+      } catch (err) {
+        console.error("Could not fetch user data", err);
+      }
+    }
+  };
+
+
   useEffect(() => {
-    fetchProjects();
+    loadUser();
   }, []);
 
-  const handleAnalysis = () => {
-    setIsLoading(true);
-    setAnalysisResult(''); // Clear previous results
+  const loginSuccess = () => {
+    loadUser(); // This will now set auth state AND fetch user data
+  };
 
-    // Simulate a thinking process for better UX
-    setTimeout(() => {
-      const result = analyzeCareers(projects);
-      setAnalysisResult(result);
-      setIsLoading(false);
-    }, 1500); // 1.5 second delay
+  const logout = () => {
+    localStorage.removeItem('token');
+    setAuthToken(null); // Clear the auth header
+    setAuth({
+      token: null,
+      isAuthenticated: false,
+      loading: false,
+      user: null
+    });
+    setUserData(null);
   };
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Career Project Tracker</h1>
-      </header>
-      <main>
-        <AddProjectForm onProjectAdded={fetchProjects} />
-        <ProjectList projects={projects} fetchProjects={fetchProjects} />
-
-        {/* 5. Add the new component to the page */}
-        <CareerAnalysis
-          projects={projects}
-          handleAnalysis={handleAnalysis}
-          analysisResult={analysisResult}
-          isLoading={isLoading}
-        />
-      </main>
-    </div>
+    <Router>
+      <Fragment>
+        <Navbar auth={auth} logout={logout} />
+        <div className="App">
+          <main className="App-main">
+            <Routes>
+              <Route path="/register" element={auth.isAuthenticated ? <Navigate to="/" /> : <Register />} />
+              <Route path="/login" element={auth.isAuthenticated ? <Navigate to="/" /> : <Login loginSuccess={loginSuccess} />} />
+              <Route
+                path="/"
+                element={
+                  <PrivateRoute auth={auth}>
+                    {/* Pass the refresh function to MainTracker */}
+                    <MainTracker fetchUserData={fetchUserData} />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <PrivateRoute auth={auth}>
+                    {/* Pass the central userData state to ProfilePage */}
+                    <ProfilePage userData={userData} loading={!userData} />
+                  </PrivateRoute>
+                }
+              />
+            </Routes>
+          </main>
+        </div>
+      </Fragment>
+    </Router>
   );
 }
 
 export default App;
+
