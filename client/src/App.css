@@ -537,3 +537,70 @@ select:focus {
   margin-left: 0.5rem;
   font-weight: bold;
 }
+
+.add-project-container {
+  background-color: #1e1e1e;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #444;
+  margin-bottom: 1rem;
+}
+
+.tabs button {
+  width: auto;
+  background: none;
+  border: none;
+  color: #888;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  border-bottom: 3px solid transparent;
+}
+
+.tabs button.active {
+  color: #61dafb;
+  border-bottom: 3px solid #61dafb;
+}
+
+.tab-content button .spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- File Input Styles --- */
+.file-input-container {
+  margin-bottom: 1rem;
+}
+
+.file-input-container input[type="file"] {
+  display: none;
+  /* Hide the default ugly input */
+}
+
+.file-label {
+  display: block;
+  padding: 12px;
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.file-label:hover {
+  border-color: #61dafb;
+}

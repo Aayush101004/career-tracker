@@ -31,8 +31,8 @@ const Navbar = ({ auth, logout }) => {
                 className={`user-menu-button ${dropdownOpen ? 'open' : ''}`}
                 onClick={() => setDropdownOpen(!dropdownOpen)}
             >
-                {getUserIcon()}
                 <span>Welcome, {user ? user.name : ''}</span>
+                {getUserIcon()}
                 <span className="dropdown-arrow">
                     <FaAngleDown />
                 </span>
