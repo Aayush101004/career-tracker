@@ -21,14 +21,14 @@ router.get('/', auth, async (req, res) => {
 // @access  Private
 router.post('/add', auth, async (req, res) => {
     const { title, description, technologies, githubLink } = req.body;
-
     try {
         const newProject = new Project({
             title,
             description,
             technologies,
             githubLink,
-            user: req.user.id // Link the project to the logged-in user
+            user: req.user.id,
+            source: 'manual' // Explicitly set the source
         });
 
         const project = await newProject.save();

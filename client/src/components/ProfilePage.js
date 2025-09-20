@@ -90,18 +90,11 @@ const ProfilePage = ({ userData, loading }) => {
                                 </button>
                                 {isExpanded && (
                                     <div className="accordion-content">
-                                        <p><strong>Description:</strong><br /> {project.description}</p>
-                                        <p><strong>Technologies:</strong><br /> {project.technologies.join(', ')}</p>
-                                        {project.githubLink &&
-                                            <a
-                                                href={project.githubLink}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="github-btn" // Apply the new button class here
-                                            >
-                                                View on GitHub
-                                            </a>
-                                        }
+                                        {/* Add the source line here */}
+                                        <p><strong>Source:</strong> <span className="project-source-text">{project.source}</span></p>
+                                        <p><strong>Description:</strong> {project.description}</p>
+                                        <p><strong>Technologies:</strong> {project.technologies.join(', ')}</p>
+                                        {project.githubLink && <a href={project.githubLink} target="_blank" rel="noopener noreferrer" className="github-btn">View on GitHub</a>}
                                     </div>
                                 )}
                             </div>

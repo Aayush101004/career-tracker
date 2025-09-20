@@ -63,7 +63,8 @@ router.post('/github', auth, async (req, res) => {
             title: repoRes.data.name,
             description: projectDescription,
             technologies: technologies.length > 0 ? technologies : ['Not specified'],
-            githubLink: repoRes.data.html_url
+            githubLink: repoRes.data.html_url,
+            source: 'github'
         });
 
         await newProject.save();
@@ -135,7 +136,8 @@ router.post('/resume', auth, upload.single('resume'), async (req, res) => {
 
         const projectsToSave = extractedProjects.map(p => ({
             ...p,
-            user: req.user.id
+            user: req.user.id,
+            source: 'resume'
         }));
 
         const savedProjects = await Project.insertMany(projectsToSave);

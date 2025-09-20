@@ -11,9 +11,17 @@ const AnalysisSchema = new Schema({
         type: String,
         required: true
     },
+    // This structure ensures a permanent, historical record of the project titles
+    // at the time of analysis.
     projects: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Project' // Corrected from 'project' to 'Project'
+        _id: {
+            type: Schema.Types.ObjectId,
+            required: true
+        },
+        title: {
+            type: String,
+            required: true
+        }
     }]
 }, {
     timestamps: true

@@ -20,21 +20,25 @@ function ProjectList({ projects, fetchProjects }) {
             <h3>My Projects</h3>
             {projects.map(project => (
                 <div key={project._id} className="project-card">
+                    {/* Add the source badge here */}
+                    <span className="project-source-badge">Added via {project.source}</span>
+
                     <h4>{project.title}</h4>
-                    <div className="accordion-content">
-                        <p><strong>Description:</strong><br /> {project.description}</p>
-                        <p><strong>Technologies:</strong><br /> {project.technologies.join(', ')}</p>
-                        {project.githubLink &&
+                    <p>{project.description}</p>
+                    <strong>Technologies:</strong> {project.technologies.join(', ')}
+
+                    {project.githubLink && (
+                        <div style={{ marginTop: '0.5rem' }}>
                             <a
                                 href={project.githubLink}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="github-btn" // Apply the new button class here
+                                className="github-btn"
                             >
                                 View on GitHub
                             </a>
-                        }
-                    </div>
+                        </div>
+                    )}
 
                     <button onClick={() => deleteProject(project._id)} style={{ marginTop: '1rem' }}>Delete</button>
                 </div>

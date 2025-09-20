@@ -604,3 +604,26 @@ select:focus {
 .file-label:hover {
   border-color: #61dafb;
 }
+
+.project-card {
+  position: relative;
+  /* Required for badge positioning */
+}
+
+.project-source-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: #3a3a3a;
+  color: #ccc;
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.project-source-text {
+  text-transform: capitalize;
+  font-weight: normal;
+}
