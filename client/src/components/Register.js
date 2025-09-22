@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useState } from 'react';
+import { FaSpinner } from 'react-icons/fa'; // Import the spinner icon
 import { Link, useNavigate } from 'react-router-dom';
 
 const Register = () => {
@@ -11,9 +12,8 @@ const Register = () => {
         gender: ''
     });
 
-    // State to hold notification messages (e.g., for success or error)
     const [notification, setNotification] = useState({ message: '', type: '' });
-
+    const [loading, setLoading] = useState(false); // Add loading state
     const navigate = useNavigate();
     const { name, email, password, password2, gender } = formData;
 
@@ -21,11 +21,12 @@ const Register = () => {
 
     const onSubmit = async e => {
         e.preventDefault();
-        setNotification({ message: '', type: '' }); // Clear previous notifications
+        setNotification({ message: '', type: '' });
+        setLoading(true); // Set loading to true
 
         if (password !== password2) {
-            // Set an error notification instead of an alert
             setNotification({ message: 'Passwords do not match', type: 'error' });
+            setLoading(false); // Stop loading on client-side error
             return;
         }
 
@@ -37,17 +38,15 @@ const Register = () => {
 
             await axios.post('/api/auth/register', body);
 
-            // Set a success notification
             setNotification({ message: 'User registered successfully!', type: 'success' });
-
-            // Clear the form after successful registration
             setFormData({ name: '', email: '', password: '', password2: '', gender: '' });
 
         } catch (err) {
             const errorMsg = err.response?.data?.errors?.[0]?.msg || 'User may already exist.';
-            // Set an error notification
             setNotification({ message: `Registration failed: ${errorMsg}`, type: 'error' });
             console.error(err.response ? err.response.data : err.message);
+        } finally {
+            setLoading(false); // Set loading to false when done
         }
     };
 
@@ -55,7 +54,6 @@ const Register = () => {
         <div className="auth-container">
             <h1>Sign Up</h1>
 
-            {/* Render the notification message if it exists */}
             {notification.message && (
                 <div className={`notification ${notification.type}`}>
                     {notification.message}
@@ -106,7 +104,7 @@ const Register = () => {
 
                 <div className="form-group">
                     <label htmlFor="gender">Gender</label>
-                    <select name="gender" value={gender} onChange={onChange} required>
+                    <select name="gender" value={gender} onChange={onChange}>
                         <option value="" disabled>-- Select an option --</option>
                         <option value="male">Male</option>
                         <option value="female">Female</option>
@@ -114,7 +112,9 @@ const Register = () => {
                     </select>
                 </div>
 
-                <button type="submit">Register</button>
+                <button type="submit" disabled={loading}>
+                    {loading ? <FaSpinner className="spinner" /> : 'Register'}
+                </button>
             </form>
             <p>Already have an account? <Link to="/login">Login</Link></p>
         </div>

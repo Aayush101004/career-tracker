@@ -1,10 +1,12 @@
 import axios from 'axios';
 import { useState } from 'react';
+import { FaSpinner } from 'react-icons/fa'; // Import the spinner icon
 import { Link, useNavigate } from 'react-router-dom';
 import setAuthToken from '../utils/setAuthToken';
 
 const Login = ({ loginSuccess }) => {
     const [formData, setFormData] = useState({ email: '', password: '' });
+    const [loading, setLoading] = useState(false); // Add loading state
     const navigate = useNavigate();
 
     const { email, password } = formData;
@@ -13,6 +15,7 @@ const Login = ({ loginSuccess }) => {
 
     const onSubmit = async e => {
         e.preventDefault();
+        setLoading(true); // Set loading to true
         try {
             const res = await axios.post('/api/auth/login', { email, password });
 
@@ -21,18 +24,11 @@ const Login = ({ loginSuccess }) => {
             loginSuccess();
             navigate('/');
         } catch (err) {
-            // --- IMPROVED ERROR HANDLING ---
-            // Check if the error has a response from the server
-            if (err.response && err.response.data) {
-                // Log the specific error from the backend
-                console.error(err.response.data);
-                const errorMsg = err.response.data.errors.map(e => e.msg).join(', ');
-                alert(`Login Failed: ${errorMsg}`);
-            } else {
-                // Handle network errors or other issues
-                console.error('An unexpected error occurred:', err.message);
-                alert('Login Failed: Could not connect to the server.');
-            }
+            const errorMsg = err.response?.data?.errors?.[0]?.msg || 'Could not connect to the server.';
+            alert(`Login Failed: ${errorMsg}`);
+            console.error(err.response ? err.response.data : err.message);
+        } finally {
+            setLoading(false); // Set loading to false when done
         }
     };
 
@@ -42,7 +38,9 @@ const Login = ({ loginSuccess }) => {
             <form onSubmit={onSubmit}>
                 <input type="email" placeholder="Email Address" name="email" value={email} onChange={onChange} required />
                 <input type="password" placeholder="Password" name="password" value={password} onChange={onChange} required />
-                <button type="submit">Login</button>
+                <button type="submit" disabled={loading}>
+                    {loading ? <FaSpinner className="spinner" /> : 'Login'}
+                </button>
             </form>
             <p>Don't have an account? <Link to="/register">Sign Up</Link></p>
         </div>

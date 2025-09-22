@@ -659,3 +659,19 @@ select:focus {
 .navbar .navbar-links a:hover {
   background-color: #3c3c3c;
 }
+
+.spinner {
+  animation: spin 1s linear infinite;
+  /* Ensures the spinner is centered inside the button */
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
