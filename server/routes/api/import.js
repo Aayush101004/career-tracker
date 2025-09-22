@@ -10,7 +10,16 @@ const pdf = require('pdf-parse');
 const upload = multer({ storage: multer.memoryStorage() });
 
 // --- Gemini API Configuration ---
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
+const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${process.env.GEMINI_API_KEY}`;
+
+// --- GitHub API Configuration (THE FIX) ---
+// Create a headers object that includes your new GitHub token from the environment variables.
+const githubApiHeaders = {
+    headers: {
+        'Authorization': `token ${process.env.GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github.v3.raw'
+    }
+};
 
 
 // --- GitHub Import Route ---
@@ -28,34 +37,32 @@ router.post('/github', auth, async (req, res) => {
         }
         const [username, repoName] = pathParts;
 
-        const repoRes = await axios.get(`https://api.github.com/repos/${username}/${repoName}`);
-        const langRes = await axios.get(repoRes.data.languages_url);
+        // Use the new headers object for all GitHub API calls
+        const repoRes = await axios.get(`https://api.github.com/repos/${username}/${repoName}`, githubApiHeaders);
+        const langRes = await axios.get(repoRes.data.languages_url, githubApiHeaders);
+
         const technologies = Object.keys(langRes.data);
         let projectDescription = repoRes.data.description || 'No description found.';
 
         try {
-            const readmeRes = await axios.get(`https://api.github.com/repos/${username}/${repoName}/readme`, {
-                headers: { 'Accept': 'application/vnd.github.v3.raw' }
-            });
+            // Use the headers here as well
+            const readmeRes = await axios.get(`https://api.github.com/repos/${username}/${repoName}/readme`, githubApiHeaders);
             const readmeContent = readmeRes.data;
 
-            // THE FIX #1: Updated the prompt to explicitly request plain text.
             const summaryPayload = {
                 contents: [{ parts: [{ text: `Summarize the following project README in a single, plain-text paragraph for a project portfolio. Do not use any markdown formatting like asterisks or bolding: ${readmeContent}` }] }]
             };
 
             const geminiResponse = await axios.post(GEMINI_API_URL, summaryPayload);
 
-            if (geminiResponse.data && geminiResponse.data.candidates && geminiResponse.data.candidates.length > 0) {
+            if (geminiResponse.data?.candidates?.[0]) {
                 const summary = geminiResponse.data.candidates[0].content.parts[0].text;
                 if (summary) {
-                    // THE FIX #2: Clean any remaining markdown characters from the response.
                     projectDescription = summary.replace(/\*\*/g, '');
                 }
             }
         } catch (readmeError) {
-            console.error('Could not fetch or summarize README. Falling back to default description.');
-            if (readmeError.response) console.error('API Error:', readmeError.response.data);
+            console.log('Could not fetch or summarize README, falling back to default description.');
         }
 
         const newProject = new Project({
@@ -71,8 +78,11 @@ router.post('/github', auth, async (req, res) => {
         res.json(newProject);
     } catch (err) {
         console.error('GitHub import error:', err.message);
-        if (err.response && err.response.status === 404) {
-            return res.status(404).json({ msg: 'Repository not found. Please check the URL.' });
+        if (err.response) {
+            console.error('GitHub API Response:', err.response.data);
+            if (err.response.status === 404) {
+                return res.status(404).json({ msg: 'Repository not found. Please check the URL.' });
+            }
         }
         res.status(500).send('Server Error while fetching from GitHub');
     }
