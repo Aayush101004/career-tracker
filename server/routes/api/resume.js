@@ -4,9 +4,6 @@ const auth = require('../../middleware/auth');
 const axios = require('axios');
 const multer = require('multer');
 const pdf = require('pdf-parse');
-const GeneratedResume = require('../../models/GeneratedResume');
-const User = require('../../models/User');
-const Project = require('../../models/Project');
 
 // Configure multer for in-memory file storage
 const upload = multer({ storage: multer.memoryStorage() });
