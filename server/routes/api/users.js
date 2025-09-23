@@ -4,7 +4,6 @@ const auth = require('../../middleware/auth');
 const User = require('../../models/User');
 const Project = require('../../models/Project');
 const Analysis = require('../../models/Analysis');
-const GeneratedResume = require('../../models/GeneratedResume');
 const bcrypt = require('bcryptjs');
 const { check, validationResult } = require('express-validator');
 
