@@ -1,12 +1,12 @@
 import axios from 'axios';
 import { useState } from 'react';
-import { FaSpinner } from 'react-icons/fa'; // Import the spinner icon
+import { FaSpinner } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import setAuthToken from '../utils/setAuthToken';
 
 const Login = ({ loginSuccess }) => {
     const [formData, setFormData] = useState({ email: '', password: '' });
-    const [loading, setLoading] = useState(false); // Add loading state
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const { email, password } = formData;
@@ -15,11 +15,12 @@ const Login = ({ loginSuccess }) => {
 
     const onSubmit = async e => {
         e.preventDefault();
-        setLoading(true); // Set loading to true
+        setLoading(true);
         try {
             const res = await axios.post('/api/auth/login', { email, password });
 
-            localStorage.setItem('token', res.data.token);
+            // Use sessionStorage to store the token for the current session only
+            sessionStorage.setItem('token', res.data.token);
             setAuthToken(res.data.token);
             loginSuccess();
             navigate('/');
@@ -28,7 +29,7 @@ const Login = ({ loginSuccess }) => {
             alert(`Login Failed: ${errorMsg}`);
             console.error(err.response ? err.response.data : err.message);
         } finally {
-            setLoading(false); // Set loading to false when done
+            setLoading(false);
         }
     };
 

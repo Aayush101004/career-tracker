@@ -675,3 +675,491 @@ select:focus {
     transform: rotate(360deg);
   }
 }
+
+.home-container {
+  text-align: center;
+}
+
+.home-options {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.home-card {
+  background-color: #1e1e1e;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 300px;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.87);
+  border: 1px solid #333;
+  transition: transform 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.home-card:hover {
+  transform: translateY(-5px);
+  border-color: #61dafb;
+}
+
+.home-card h3 {
+  color: #61dafb;
+  margin-top: 1rem;
+}
+
+/* --- Resume Modifier Styles --- */
+.resume-modifier-container {
+  background-color: #1e1e1e;
+  padding: 2rem;
+  border-radius: 8px;
+}
+
+.resume-form {
+  margin-top: 1.5rem;
+}
+
+.analysis-results-container {
+  margin-top: 2rem;
+  text-align: left;
+}
+
+.points-section {
+  margin-bottom: 1.5rem;
+}
+
+.points-section h4 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #444;
+  padding-bottom: 0.5rem;
+}
+
+.good-points h4 {
+  color: #4caf50;
+  /* Green */
+}
+
+.bad-points h4 {
+  color: #f44336;
+  /* Red */
+}
+
+.points-section ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.points-section li {
+  padding: 0.5rem;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.resume-builder-container {
+  background-color: #1e1e1e;
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.builder-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+@media (min-width: 1024px) {
+  .builder-layout {
+    flex-direction: row;
+  }
+}
+
+.builder-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-section {
+  background-color: #2a2a2a;
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.form-section h4 {
+  margin-top: 0;
+  border-bottom: 1px solid #444;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.project-selection-list {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #444;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+.project-checkbox {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.project-checkbox input {
+  width: auto;
+  margin-right: 0.5rem;
+}
+
+.resume-preview {
+  flex: 1.5;
+  position: relative;
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.download-btn {
+  width: auto;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+}
+
+.resume-output-area {
+  background-color: #fff;
+  color: #121212;
+  padding: 2rem;
+  border-radius: 4px;
+  min-height: 500px;
+  line-height: 1.5;
+  /* Improved line spacing */
+  position: relative;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 10.5pt;
+  /* Reduced font size for better fit */
+}
+
+.resume-output-area .placeholder-text {
+  color: #888;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.spinner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+}
+
+.resume-content h1,
+.resume-content h2,
+.resume-content h3 {
+  margin-bottom: 0.5rem;
+}
+
+.resume-content h2 {
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 0.25rem;
+}
+
+/* --- Profile Page Resume History Styles --- */
+.resume-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.history-item {
+  background-color: #2a2a2a;
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+}
+
+.history-item p {
+  margin: 0;
+}
+
+.history-item small {
+  color: #aaa;
+}
+
+.dynamic-section-item {
+  position: relative;
+  background-color: #333;
+  padding: 1rem;
+  padding-right: 2.5rem;
+  /* Make space for delete button */
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.add-item-btn {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: #3a3a3a;
+  color: #61dafb;
+  border: 1px dashed #61dafb;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.delete-item-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  width: auto;
+  padding: 0.25rem;
+  font-size: 1rem;
+}
+
+.delete-item-btn:hover {
+  color: #f44336;
+  /* Red */
+}
+
+.resume-builder-container {
+  background-color: #1e1e1e;
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.builder-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .builder-layout {
+    flex-direction: row;
+  }
+}
+
+.builder-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-section {
+  background-color: #2a2a2a;
+  padding: 1.5rem;
+  border-radius: 4px;
+}
+
+.form-section h4 {
+  margin-top: 0;
+  border-bottom: 1px solid #444;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.project-selection-list {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #444;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+.project-checkbox {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.project-checkbox input {
+  width: auto;
+  margin-right: 0.5rem;
+}
+
+.resume-preview {
+  flex: 1.5;
+  position: relative;
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.download-btn {
+  width: auto;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.resume-output-area {
+  background-color: #fff;
+  color: #121212;
+  padding: 2rem;
+  border-radius: 4px;
+  min-height: 500px;
+  line-height: 1.5;
+  position: relative;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 10.5pt;
+}
+
+.resume-output-area .placeholder-text {
+  color: #888;
+  text-align: center;
+  margin-top: 2rem;
+  font-family: sans-serif;
+}
+
+.spinner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  color: #121212;
+  border-radius: 4px;
+}
+
+.resume-content h1,
+.resume-content h2,
+.resume-content h3 {
+  margin: 1rem 0 0.5rem 0;
+  padding: 0;
+}
+
+.resume-content h1 {
+  font-size: 1.8em;
+  text-align: center;
+  margin-bottom: 0.2em;
+}
+
+.resume-content h2 {
+  font-size: 1.3em;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 0.25rem;
+}
+
+.resume-content h3 {
+  font-size: 1.1em;
+  font-style: italic;
+}
+
+.resume-content ul {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.resume-content li {
+  margin-bottom: 0.5rem;
+}
+
+.resume-content strong {
+  font-weight: bold;
+}
+
+/* --- Dynamic Form Section Styles --- */
+.dynamic-section-item {
+  position: relative;
+  background-color: #333;
+  padding: 1rem;
+  padding-right: 2.5rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  border-left: 3px solid #61dafb;
+}
+
+.add-item-btn {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: #3a3a3a;
+  color: #61dafb;
+  border: 1px dashed #61dafb;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.delete-item-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  width: auto;
+  padding: 0.25rem;
+  font-size: 1rem;
+}
+
+.delete-item-btn:hover {
+  color: #f44336;
+}
+
+/* --- Profile Page Resume History --- */
+.resume-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.history-item {
+  background-color: #2a2a2a;
+  padding: 0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.history-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background-color: #2a2a2a;
+  color: white;
+  padding: 0.75rem 1rem;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.history-item-header:hover {
+  background-color: #3c3c3c;
+}
+
+.history-item-header small {
+  color: #aaa;
+}
+
+.resume-history-content {
+  background-color: #121212;
+  padding: 1rem;
+  border-top: 1px solid #444;
+}

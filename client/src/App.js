@@ -3,11 +3,13 @@ import { jwtDecode } from 'jwt-decode';
 import { Fragment, useEffect, useState } from 'react';
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
+import HomePage from './components/HomePage';
 import Login from './components/Login';
 import MainTracker from './components/MainTracker';
 import Navbar from './components/NavBar';
 import ProfilePage from './components/ProfilePage';
 import Register from './components/Register';
+import ResumeModifier from './components/ResumeModifier';
 import setAuthToken from './utils/setAuthToken';
 
 // A wrapper for routes that require a logged-in user
@@ -20,7 +22,8 @@ const PrivateRoute = ({ auth, children }) => {
 
 function App() {
   const [auth, setAuth] = useState({
-    token: localStorage.getItem('token'),
+    // Use sessionStorage to ensure login is cleared when the browser tab is closed
+    token: sessionStorage.getItem('token'),
     isAuthenticated: null,
     loading: true,
     user: null
@@ -30,7 +33,8 @@ function App() {
   const [userData, setUserData] = useState(null);
 
   const loadUser = () => {
-    const token = localStorage.getItem('token');
+    // Use sessionStorage here as well
+    const token = sessionStorage.getItem('token');
     if (token) {
       setAuthToken(token);
       try {
@@ -41,10 +45,8 @@ function App() {
           loading: false,
           user: decoded.user
         });
-        // Fetch detailed user data after confirming authentication
         fetchUserData();
       } catch (error) {
-        // Handle invalid token
         logout();
       }
     } else {
@@ -59,7 +61,7 @@ function App() {
 
   // Central function to fetch user data
   const fetchUserData = async () => {
-    if (localStorage.getItem('token')) {
+    if (sessionStorage.getItem('token')) {
       try {
         const res = await axios.get('/api/users/me');
         setUserData(res.data);
@@ -72,15 +74,16 @@ function App() {
 
   useEffect(() => {
     loadUser();
-  }, []);
+  });
 
   const loginSuccess = () => {
-    loadUser(); // This will now set auth state AND fetch user data
+    loadUser();
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    setAuthToken(null); // Clear the auth header
+    // Use sessionStorage here to clear the token on logout
+    sessionStorage.removeItem('token');
+    setAuthToken(null);
     setAuth({
       token: null,
       isAuthenticated: false,
@@ -99,23 +102,22 @@ function App() {
             <Routes>
               <Route path="/register" element={auth.isAuthenticated ? <Navigate to="/" /> : <Register />} />
               <Route path="/login" element={auth.isAuthenticated ? <Navigate to="/" /> : <Login loginSuccess={loginSuccess} />} />
+
               <Route
                 path="/"
-                element={
-                  <PrivateRoute auth={auth}>
-                    {/* Pass the refresh function to MainTracker */}
-                    <MainTracker fetchUserData={fetchUserData} />
-                  </PrivateRoute>
-                }
+                element={<PrivateRoute auth={auth}><HomePage /></PrivateRoute>}
+              />
+              <Route
+                path="/tracker"
+                element={<PrivateRoute auth={auth}><MainTracker fetchUserData={fetchUserData} /></PrivateRoute>}
+              />
+              <Route
+                path="/resume-modifier"
+                element={<PrivateRoute auth={auth}><ResumeModifier /></PrivateRoute>}
               />
               <Route
                 path="/profile"
-                element={
-                  <PrivateRoute auth={auth}>
-                    {/* Pass the central userData state to ProfilePage */}
-                    <ProfilePage userData={userData} loading={!userData} />
-                  </PrivateRoute>
-                }
+                element={<PrivateRoute auth={auth}><ProfilePage userData={userData} loading={!userData} /></PrivateRoute>}
               />
             </Routes>
           </main>

@@ -19,7 +19,13 @@ const UserSchema = new Schema({
         type: String,
         enum: ['male', 'female', 'other']
     },
-    // Add this new field to store the analysis result
+    // ADD THESE NEW FIELDS
+    phone: {
+        type: String
+    },
+    location: {
+        type: String
+    },
     analyzedCareer: {
         type: String
     },

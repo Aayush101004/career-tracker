@@ -4,22 +4,12 @@ import { FaAngleDown } from 'react-icons/fa';
 
 const ProfilePage = ({ userData, loading }) => {
     const [expandedProjects, setExpandedProjects] = useState([]);
-    const [passwordData, setPasswordData] = useState({
-        currentPassword: '',
-        newPassword: ''
-    });
+    const [passwordData, setPasswordData] = useState({ currentPassword: '', newPassword: '' });
 
     const toggleProject = (id) => {
-        setExpandedProjects(prevExpanded =>
-            prevExpanded.includes(id)
-                ? prevExpanded.filter(projId => projId !== id)
-                : [...prevExpanded, id]
-        );
+        setExpandedProjects(prev => prev.includes(id) ? prev.filter(pId => pId !== id) : [...prev, id]);
     };
-
-    const onPasswordChange = (e) => {
-        setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
-    };
+    const onPasswordChange = (e) => setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
 
     const onPasswordSubmit = async (e) => {
         e.preventDefault();
@@ -41,7 +31,7 @@ const ProfilePage = ({ userData, loading }) => {
         return <div>Could not load profile data. Please try refreshing.</div>;
     }
 
-    const { user, projects, analyses } = userData;
+    const { user, projects, analyses} = userData;
 
     return (
         <div className="profile-container">
@@ -50,6 +40,8 @@ const ProfilePage = ({ userData, loading }) => {
                 <h3>Account Details</h3>
                 <p><strong>Name:</strong> {user.name}</p>
                 <p><strong>Email:</strong> {user.email}</p>
+                <p><strong>Phone:</strong> {user.phone || 'Not provided'}</p>
+                <p><strong>Location:</strong> {user.location || 'Not provided'}</p>
             </div>
 
             <div className="profile-section">
@@ -59,19 +51,13 @@ const ProfilePage = ({ userData, loading }) => {
                         {analyses.map(analysis => (
                             <div key={analysis._id} className="analysis-card">
                                 <p className="career-path-result">{analysis.careerPath}</p>
-                                <small className="analysis-date">
-                                    Analyzed on: {new Date(analysis.createdAt).toLocaleDateString()}
-                                </small>
+                                <small className="analysis-date">Analyzed on: {new Date(analysis.createdAt).toLocaleDateString()}</small>
                                 <p><strong>Based on Projects:</strong></p>
-                                <ul>
-                                    {analysis.projects.map(p => <li key={p._id}>{p.title}</li>)}
-                                </ul>
+                                <ul>{analysis.projects.map(p => <li key={p._id}>{p.title}</li>)}</ul>
                             </div>
                         ))}
                     </div>
-                ) : (
-                    <p>No career path analyzed yet. Add projects and run the analysis on the main page.</p>
-                )}
+                ) : <p>No career path analyzed yet.</p>}
             </div>
 
             <div className="profile-section">
@@ -81,16 +67,12 @@ const ProfilePage = ({ userData, loading }) => {
                         const isExpanded = expandedProjects.includes(project._id);
                         return (
                             <div key={project._id} className="project-accordion">
-                                <button
-                                    onClick={() => toggleProject(project._id)}
-                                    className={`accordion-header ${isExpanded ? 'open' : ''}`}
-                                >
+                                <button onClick={() => toggleProject(project._id)} className={`accordion-header ${isExpanded ? 'open' : ''}`}>
                                     {project.title}
                                     <FaAngleDown className="accordion-arrow" />
                                 </button>
                                 {isExpanded && (
                                     <div className="accordion-content">
-                                        {/* Add the source line here */}
                                         <p><strong>Source:</strong> <span className="project-source-text">{project.source}</span></p>
                                         <p><strong>Description:</strong> {project.description}</p>
                                         <p><strong>Technologies:</strong> {project.technologies.join(', ')}</p>
@@ -106,25 +88,8 @@ const ProfilePage = ({ userData, loading }) => {
             <div className="profile-section">
                 <h3>Change Password</h3>
                 <form onSubmit={onPasswordSubmit}>
-                    <input
-                        type="password"
-                        placeholder="Current Password"
-                        name="currentPassword"
-                        value={passwordData.currentPassword}
-                        onChange={onPasswordChange}
-                        required
-                        autoComplete="current-password"
-                    />
-                    <input
-                        type="password"
-                        placeholder="New Password"
-                        name="newPassword"
-                        value={passwordData.newPassword}
-                        onChange={onPasswordChange}
-                        minLength="6"
-                        required
-                        autoComplete="new-password"
-                    />
+                    <input type="password" placeholder="Current Password" name="currentPassword" value={passwordData.currentPassword} onChange={onPasswordChange} required autoComplete="current-password" />
+                    <input type="password" placeholder="New Password" name="newPassword" value={passwordData.newPassword} onChange={onPasswordChange} minLength="6" required autoComplete="new-password" />
                     <button type="submit">Update Password</button>
                 </form>
             </div>

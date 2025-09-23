@@ -58,7 +58,7 @@ const Navbar = ({ auth, logout }) => {
     return (
         <nav className="navbar">
             <h1>
-                <Link to="/">Career Project Tracker</Link>
+                <Link to="/">Stepwise</Link>
             </h1>
             {/* ADDED a specific className to this ul */}
             <ul className="navbar-links">{isAuthenticated ? authLinks : ""}</ul>
