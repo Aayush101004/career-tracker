@@ -19,13 +19,6 @@ const UserSchema = new Schema({
         type: String,
         enum: ['male', 'female', 'other']
     },
-    // ADD THESE NEW FIELDS
-    phone: {
-        type: String
-    },
-    location: {
-        type: String
-    },
     analyzedCareer: {
         type: String
     },

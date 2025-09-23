@@ -25,7 +25,6 @@ app.use('/projects', require('./routes/projects'));
 app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/users', require('./routes/api/users'));
 app.use('/api/import', require('./routes/api/import'));
-app.use('/api/resume', require('./routes/api/resume'));
 
 
 // Start the server

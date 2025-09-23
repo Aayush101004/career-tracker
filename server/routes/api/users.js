@@ -15,29 +15,8 @@ router.get('/me', auth, async (req, res) => {
         const user = await User.findById(req.user.id).select('-password');
         const projects = await Project.find({ user: req.user.id }).sort({ createdAt: -1 });
         const analyses = await Analysis.find({ user: req.user.id }).sort({ createdAt: -1 });
-        const generatedResumes = await GeneratedResume.find({ user: req.user.id }).sort({ createdAt: -1 });
 
-        res.json({ user, projects, analyses, generatedResumes });
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server Error');
-    }
-});
-
-// @route   PUT api/users/details
-// @desc    Update user's personal details (phone, location)
-// @access  Private
-router.put('/details', auth, async (req, res) => {
-    const { phone, location } = req.body;
-    try {
-        const user = await User.findById(req.user.id);
-        if (!user) {
-            return res.status(404).json({ msg: 'User not found' });
-        }
-        user.phone = phone || user.phone;
-        user.location = location || user.location;
-        await user.save();
-        res.json(user);
+        res.json({ user, projects, analyses});
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
