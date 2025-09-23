@@ -40,8 +40,6 @@ const ProfilePage = ({ userData, loading }) => {
                 <h3>Account Details</h3>
                 <p><strong>Name:</strong> {user.name}</p>
                 <p><strong>Email:</strong> {user.email}</p>
-                <p><strong>Phone:</strong> {user.phone || 'Not provided'}</p>
-                <p><strong>Location:</strong> {user.location || 'Not provided'}</p>
             </div>
 
             <div className="profile-section">
