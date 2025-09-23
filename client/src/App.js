@@ -74,7 +74,7 @@ function App() {
 
   useEffect(() => {
     loadUser();
-  });
+  }, []);
 
   const loginSuccess = () => {
     loadUser();
