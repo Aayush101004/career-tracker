@@ -1189,3 +1189,182 @@ select:focus {
   text-align: center;
   color: #61dafb;
 }
+
+.question-item {
+  background-color: #2a2a2a;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  list-style-type: none;
+}
+
+.answer-section {
+  border-top: 1px solid #444;
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.mic-btn,
+.submit-answer-btn {
+  width: auto;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mic-btn.recording {
+  background-color: #f44336;
+  color: white;
+}
+
+.transcript {
+  background-color: #121212;
+  padding: 0.75rem;
+  border-radius: 4px;
+  min-height: 40px;
+  font-style: italic;
+  color: #ccc;
+}
+
+.feedback-container {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 4px;
+  background-color: #333;
+  position: relative;
+}
+
+.feedback-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.score-circle {
+  background-color: #61dafb;
+  color: #121212;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.points-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.points-columns ul {
+  padding-left: 1rem;
+  margin: 0.5rem 0 0 0;
+}
+
+.spinner-overlay-small {
+  padding: 1rem;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.question-item {
+  background-color: #2a2a2a;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  list-style-type: none;
+}
+.answer-section {
+  border-top: 1px solid #444;
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.mic-btn, .submit-answer-btn {
+  width: auto;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.mic-btn.recording {
+  background-color: #f44336;
+  color: white;
+}
+.transcript {
+  background-color: #121212;
+  padding: 0.75rem;
+  border-radius: 4px;
+  min-height: 40px;
+  font-style: italic;
+  color: #ccc;
+}
+.feedback-container {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 4px;
+  background-color: #333;
+  position: relative;
+}
+.feedback-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.score-circle {
+  background-color: #61dafb;
+  color: #121212;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.points-columns {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+@media (min-width: 768px) {
+    .points-columns {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.points-columns ul {
+  padding-left: 1rem;
+  margin: 0.5rem 0 0 0;
+}
+.good-points ul { list-style-type: '✓ '; color: #81c784; }
+.bad-points ul { list-style-type: '✗ '; color: #e57373; }
+
+.spinner-overlay-small {
+    padding: 1rem;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
