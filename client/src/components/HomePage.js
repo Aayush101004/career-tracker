@@ -1,4 +1,4 @@
-import { FaFileAlt, FaProjectDiagram } from 'react-icons/fa'; // Add new icon
+import { FaFileAlt, FaProjectDiagram, FaUserTie } from 'react-icons/fa'; // Add new icon
 import { Link } from 'react-router-dom';
 
 const HomePage = () => {
@@ -16,6 +16,11 @@ const HomePage = () => {
                     <FaFileAlt size={50} />
                     <h3>Resume Modifier</h3>
                     <p>Analyze and tailor your resume for a specific job role.</p>
+                </Link>
+                <Link to="/interview-coach" className="home-card">
+                    <FaUserTie size={50} />
+                    <h3>AI Interview Coach</h3>
+                    <p>Generate personalized interview questions based on your projects.</p>
                 </Link>
             </div>
         </div>

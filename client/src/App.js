@@ -4,6 +4,7 @@ import { Fragment, useEffect, useState } from 'react';
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
 import HomePage from './components/HomePage';
+import InterviewCoach from './components/InterviewCoach';
 import Login from './components/Login';
 import MainTracker from './components/MainTracker';
 import Navbar from './components/NavBar';
@@ -114,6 +115,10 @@ function App() {
               <Route
                 path="/resume-modifier"
                 element={<PrivateRoute auth={auth}><ResumeModifier /></PrivateRoute>}
+              />
+              <Route
+                path="/interview-coach"
+                element={<PrivateRoute auth={auth}><InterviewCoach /></PrivateRoute>}
               />
               <Route
                 path="/profile"
