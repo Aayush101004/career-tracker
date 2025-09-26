@@ -757,31 +757,6 @@ select:focus {
   border-bottom: 1px solid #2a2a2a;
 }
 
-.resume-builder-container {
-  background-color: #1e1e1e;
-  padding: 1.5rem;
-  border-radius: 8px;
-}
-
-.builder-layout {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-@media (min-width: 1024px) {
-  .builder-layout {
-    flex-direction: row;
-  }
-}
-
-.builder-form {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
 .form-section {
   background-color: #2a2a2a;
   padding: 1rem;
