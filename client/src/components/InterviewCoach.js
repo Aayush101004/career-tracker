@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { FaBrain, FaCode, FaMicrophone, FaPaperPlane, FaProjectDiagram, FaSpinner, FaStopCircle } from 'react-icons/fa';
+import { FaArrowLeft, FaBrain, FaCode, FaMicrophone, FaPaperPlane, FaProjectDiagram, FaSpinner, FaStopCircle } from 'react-icons/fa';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 
 const InterviewCoach = () => {
@@ -10,11 +10,14 @@ const InterviewCoach = () => {
     const [generatedQuestions, setGeneratedQuestions] = useState(null);
     const [loading, setLoading] = useState(false);
     const [notification, setNotification] = useState('');
+    const [questionsVisible, setQuestionsVisible] = useState(false);
 
     // State for the interactive parts
     const [activeQuestionIndex, setActiveQuestionIndex] = useState(null);
     const [feedback, setFeedback] = useState({});
     const [isEvaluating, setIsEvaluating] = useState(null);
+    const [experience, setExperience] = useState('');
+
 
     // Speech recognition hooks
     const {
@@ -45,8 +48,8 @@ const InterviewCoach = () => {
 
     const handleGenerateQuestions = async (e) => {
         e.preventDefault();
-        if (!jobRole || selectedProjects.length === 0) {
-            setNotification('Please provide a job role and select at least one project.');
+        if (!jobRole || selectedProjects.length === 0 || !experience) {
+            setNotification('Please provide a job role, experience and select at least one project.');
             setTimeout(() => setNotification(''), 5000);
             return;
         }
@@ -54,8 +57,9 @@ const InterviewCoach = () => {
         setGeneratedQuestions(null);
         setNotification('');
         try {
-            const res = await axios.post('/api/interview/prepare', { jobRole, projectIds: selectedProjects });
+            const res = await axios.post('/api/interview/prepare', { jobRole, projectIds: selectedProjects, experience });
             setGeneratedQuestions(res.data);
+            setQuestionsVisible(true);
         } catch (err) {
             const errorMsg = err.response?.data?.msg || 'Failed to generate questions.';
             setNotification(errorMsg);
@@ -83,7 +87,7 @@ const InterviewCoach = () => {
         }
         setIsEvaluating(activeQuestionIndex);
         try {
-            const res = await axios.post('/api/interview/evaluate', { question, answer: transcript });
+            const res = await axios.post('/api/interview/evaluate', { question, answer: transcript, jobRole, experience });
             setFeedback(prev => ({ ...prev, [activeQuestionIndex]: res.data }));
         } catch (err) {
             console.error("Failed to evaluate answer", err);
@@ -93,9 +97,12 @@ const InterviewCoach = () => {
         }
     };
 
-    const getFundamentalsTitle = (role) => {
-        const aiKeywords = ['ai', 'machine learning', 'ml', 'data scientist', 'analyst'];
-        return aiKeywords.some(keyword => role.toLowerCase().includes(keyword)) ? 'AI / ML Fundamentals' : 'CS Fundamentals';
+    const handleBack = () => {
+        setQuestionsVisible(false);
+        setGeneratedQuestions(null);
+        setJobRole('');
+        setExperience('');
+        setSelectedProjects([]);
     };
 
     // Helper to render a list of questions with interactive elements
@@ -150,55 +157,70 @@ const InterviewCoach = () => {
 
     return (
         <div className="interview-coach-container">
-            <h2>AI Interview Coach</h2>
-            <p>Practice your interview answers and get instant AI-powered feedback.</p>
-            {notification && <div className="notification error">{notification}</div>}
-            <form onSubmit={handleGenerateQuestions} className="coach-form">
-                <div className="form-section">
-                    <h4>1. Target Job Role</h4>
-                    <input
-                        type="text"
-                        placeholder="Enter the Job Role (e.g., 'React Native Developer', 'AI Engineer')"
-                        value={jobRole}
-                        onChange={(e) => setJobRole(e.target.value)}
-                        required
-                    />
-                </div>
-
-                <div className="form-section">
-                    <h4>2. Select Relevant Projects</h4>
-                    <div className="project-selection-list">
-                        {userProjects.length > 0 ? userProjects.map(p => (
-                            <div key={p._id} className="project-checkbox">
-                                <input
-                                    type="checkbox"
-                                    id={p._id}
-                                    value={p._id}
-                                    checked={selectedProjects.includes(p._id)}
-                                    onChange={() => handleProjectSelection(p._id)}
-                                />
-                                <label htmlFor={p._id}>{p.title}</label>
+            {!questionsVisible ? (
+                <>
+                    <h2>AI Interview Coach</h2>
+                    <p>Practice your interview answers and get instant AI-powered feedback.</p>
+                    {notification && <div className="notification error">{notification}</div>}
+                    <form onSubmit={handleGenerateQuestions} className="coach-form">
+                        <div className="form-section">
+                            <h4>1. Target Job Role</h4>
+                            <input
+                                type="text"
+                                placeholder="Enter the Job Role (e.g., 'React Native Developer', 'AI Engineer')"
+                                value={jobRole}
+                                onChange={(e) => setJobRole(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="form-section">
+                            <h4>2. Years of Experience</h4>
+                            <input
+                                type="number"
+                                placeholder="Enter years of experience"
+                                value={experience}
+                                onChange={(e) => setExperience(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="form-section">
+                            <h4>3. Select Relevant Projects</h4>
+                            <div className="project-selection-list">
+                                {userProjects.length > 0 ? userProjects.map(p => (
+                                    <div key={p._id} className="project-checkbox">
+                                        <input
+                                            type="checkbox"
+                                            id={p._id}
+                                            value={p._id}
+                                            checked={selectedProjects.includes(p._id)}
+                                            onChange={() => handleProjectSelection(p._id)}
+                                        />
+                                        <label htmlFor={p._id}>{p.title}</label>
+                                    </div>
+                                )) : <p>No projects found. Please add projects in the Career Project Tracker first.</p>}
                             </div>
-                        )) : <p>No projects found. Please add projects in the Career Project Tracker first.</p>}
+                        </div>
+
+                        <button type="submit" disabled={loading}>
+                            {loading ? <FaSpinner className="spinner" /> : 'Generate Questions'}
+                        </button>
+                    </form>
+                </>
+            ) : (
+                generatedQuestions && (
+                    <div className="questions-results-container">
+                        <button onClick={handleBack} className="back-button">
+                            <FaArrowLeft />
+                        </button>
+                        <h3>Generated Questions for '{jobRole}'</h3>
+                        <div className="points-section"><h4><FaProjectDiagram /> Easy</h4><ul>{renderQuestionList(generatedQuestions.easy, 'easy')}</ul></div>
+                        <div className="points-section"><h4><FaBrain /> Medium</h4><ul>{renderQuestionList(generatedQuestions.medium, 'medium')}</ul></div>
+                        <div className="points-section"><h4><FaCode /> Hard</h4><ul>{renderQuestionList(generatedQuestions.hard, 'hard')}</ul></div>
                     </div>
-                </div>
-
-                <button type="submit" disabled={loading}>
-                    {loading ? <FaSpinner className="spinner" /> : 'Generate Questions'}
-                </button>
-            </form>
-
-            {generatedQuestions && (
-                <div className="questions-results-container">
-                    <h3>Generated Questions for '{jobRole}'</h3>
-                    <div className="points-section"><h4><FaProjectDiagram /> Technical & Project Deep Dive</h4><ul>{renderQuestionList(generatedQuestions.technicalQuestions, 'tech')}</ul></div>
-                    <div className="points-section"><h4><FaBrain /> Behavioral Questions</h4><ul>{renderQuestionList(generatedQuestions.behavioralQuestions, 'behav')}</ul></div>
-                    <div className="points-section"><h4><FaCode /> {getFundamentalsTitle(jobRole)}</h4><ul>{renderQuestionList(generatedQuestions.fundamentalQuestions, 'fund')}</ul></div>
-                </div>
+                )
             )}
         </div>
     );
 };
 
 export default InterviewCoach;
-

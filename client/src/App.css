@@ -1262,18 +1262,22 @@ select:focus {
   margin-bottom: 1rem;
   list-style-type: none;
 }
+
 .answer-section {
   border-top: 1px solid #444;
   margin-top: 1rem;
   padding-top: 1rem;
 }
+
 .controls {
   display: flex;
   align-items: center;
   gap: 1rem;
   margin-bottom: 1rem;
 }
-.mic-btn, .submit-answer-btn {
+
+.mic-btn,
+.submit-answer-btn {
   width: auto;
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
@@ -1281,10 +1285,12 @@ select:focus {
   align-items: center;
   gap: 0.5rem;
 }
+
 .mic-btn.recording {
   background-color: #f44336;
   color: white;
 }
+
 .transcript {
   background-color: #121212;
   padding: 0.75rem;
@@ -1293,6 +1299,7 @@ select:focus {
   font-style: italic;
   color: #ccc;
 }
+
 .feedback-container {
   margin-top: 1rem;
   padding: 1rem;
@@ -1300,12 +1307,14 @@ select:focus {
   background-color: #333;
   position: relative;
 }
+
 .feedback-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.5rem;
 }
+
 .score-circle {
   background-color: #61dafb;
   color: #121212;
@@ -1317,6 +1326,7 @@ select:focus {
   align-items: center;
   justify-content: center;
 }
+
 .points-columns {
   display: grid;
   grid-template-columns: 1fr;
@@ -1325,21 +1335,48 @@ select:focus {
 }
 
 @media (min-width: 768px) {
-    .points-columns {
-        grid-template-columns: 1fr 1fr;
-    }
+  .points-columns {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .points-columns ul {
   padding-left: 1rem;
   margin: 0.5rem 0 0 0;
 }
-.good-points ul { list-style-type: '✓ '; color: #81c784; }
-.bad-points ul { list-style-type: '✗ '; color: #e57373; }
 
-.spinner-overlay-small {
-    padding: 1rem;
-    text-align: center;
-    font-size: 1.5rem;
+.good-points ul {
+  list-style-type: '✓ ';
+  color: #81c784;
 }
 
+.bad-points ul {
+  list-style-type: '✗ ';
+  color: #e57373;
+}
+
+.spinner-overlay-small {
+  padding: 1rem;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #2c2c2c;
+  /* A standard blue color */
+  font-size: 1.5rem;
+  /* Make the arrow a bit bigger to be easily clickable */
+  padding: 5px;
+  width: 35px;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s ease-in-out;
+}
+
+.back-button:hover {
+  color: #1b1818;
+  /* A darker blue on hover */
+}
