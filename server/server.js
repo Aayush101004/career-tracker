@@ -27,6 +27,7 @@ app.use('/api/users', require('./routes/api/users'));
 app.use('/api/import', require('./routes/api/import'));
 app.use('/api/interview', require('./routes/api/interview'));
 app.use('/api/resume', require('./routes/api/resume'));
+app.use('/api/analysis', require('./routes/api/analysis'));
 
 // Start the server
 app.listen(PORT, () => {

@@ -9,13 +9,15 @@ const Register = () => {
         email: '',
         password: '',
         password2: '',
-        gender: ''
+        gender: '',
+        country: '',
+        state: ''
     });
 
     const [notification, setNotification] = useState({ message: '', type: '' });
     const [loading, setLoading] = useState(false); // Add loading state
     const navigate = useNavigate();
-    const { name, email, password, password2, gender } = formData;
+    const { name, email, password, password2, gender, country, state } = formData;
 
     const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
 
@@ -111,7 +113,20 @@ const Register = () => {
                         <option value="other">Rather not say</option>
                     </select>
                 </div>
-
+                <input
+                    type="text"
+                    placeholder="Country (Optional)"
+                    name="country"
+                    value={country}
+                    onChange={onChange}
+                />
+                <input
+                    type="text"
+                    placeholder="State / Region (Optional)"
+                    name="state"
+                    value={state}
+                    onChange={onChange}
+                />
                 <button type="submit" disabled={loading}>
                     {loading ? <FaSpinner className="spinner" /> : 'Register'}
                 </button>

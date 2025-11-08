@@ -22,10 +22,11 @@ router.post(
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { name, email, password, gender } = req.body;
+        const { name, email, password, country, state } = req.body;
 
         try {
             let user = await User.findOne({ email });
+
             if (user) {
                 return res.status(400).json({ errors: [{ msg: 'User already exists' }] });
             }
@@ -34,7 +35,8 @@ router.post(
                 name,
                 email,
                 password,
-                gender
+                country, // Added
+                state    // Added
             });
 
             const salt = await bcrypt.genSalt(10);
@@ -97,6 +99,56 @@ router.post(
         } catch (err) {
             console.error(err.message);
             res.status(500).send('Server error');
+        }
+    }
+);
+
+router.put(
+    '/profile',
+    [
+        auth,
+        [
+            check('name', 'Name is required').not().isEmpty(),
+            check('email', 'Please include a valid email').isEmail()
+        ]
+    ],
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        const { name, email, country, state } = req.body;
+
+        try {
+            const user = await User.findById(req.user.id);
+
+            if (!user) {
+                return res.status(404).json({ msg: 'User not found' });
+            }
+
+            // Check if email is being changed and if it's already taken
+            if (email !== user.email) {
+                let emailExists = await User.findOne({ email });
+                if (emailExists) {
+                    return res.status(400).json({ errors: [{ msg: 'Email is already in use' }] });
+                }
+            }
+
+            user.name = name;
+            user.email = email;
+            user.country = country || '';
+            user.state = state || '';
+
+            await user.save();
+
+            // Return the updated user object (excluding password)
+            const updatedUser = await User.findById(req.user.id).select('-password');
+            res.json(updatedUser);
+
+        } catch (err) {
+            console.error(err.message);
+            res.status(500).send('Server Error');
         }
     }
 );

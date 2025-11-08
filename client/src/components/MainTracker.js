@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { analyzeCareers } from '../utils/careerAnalyzer';
 import AddProjectForm from './AddProjectForm';
 import CareerAnalysis from './careerAnalysis';
 import ProjectList from './ProjectList';
@@ -26,33 +25,38 @@ const MainTracker = ({ fetchUserData }) => {
 
     const handleAnalysis = async () => {
         setIsLoading(true);
-        setAnalysisResult('');
-        setNotification('');
+        setAnalysisResult(null);
 
-        setTimeout(async () => {
-            const result = analyzeCareers(projects);
-            setAnalysisResult(result);
-            setIsLoading(false);
+        // 1. Combine all technologies from all projects
+        const allTechs = projects.flatMap(p => p.technologies);
 
-            try {
-                // Collect the IDs of the projects being analyzed
-                const projectIds = projects.map(p => p._id);
+        // 2. Projects to save (only id and title to keep payload small)
+        const projectsToSave = projects.map(p => ({ _id: p._id, title: p.title }));
 
-                // Send both the career result and the project IDs
-                await axios.post('/api/users/analysis', {
-                    career: result,
-                    projectIds: projectIds
-                });
-
-                setNotification('Analysis complete and saved to your profile!');
-                fetchUserData(); // This tells App.js to refetch all user data
-                setTimeout(() => setNotification(''), 5000);
-            } catch (err) {
-                console.error('Could not save analysis:', err);
-                setNotification('Error: Could not save analysis to profile.');
-                setTimeout(() => setNotification(''), 5000);
+        // 3. Set up headers
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+                // Auth token should be set globally by your setAuthToken util
             }
-        }, 1500);
+        };
+
+        // 4. Create the request body with technologies AND projects
+        const body = JSON.stringify({ technologies: allTechs, projects: projectsToSave });
+
+        try {
+            // 5. Call the API endpoint
+            const res = await axios.post('/api/analysis/career', body, config);
+
+            // 6. Set the result from the AI's response
+            setAnalysisResult(res.data);
+
+        } catch (err) {
+            console.error(err.response ? err.response.data.msg : err.message);
+            setAnalysisResult('Error: Could not analyze career path.');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (

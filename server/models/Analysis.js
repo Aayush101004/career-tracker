@@ -1,3 +1,5 @@
+// server/models/Analysis.js
+
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -11,8 +13,26 @@ const AnalysisSchema = new Schema({
         type: String,
         required: true
     },
-    // This structure ensures a permanent, historical record of the project titles
-    // at the time of analysis.
+    reasoning: {
+        type: String,
+        required: false
+    },
+    technologiesKey: {
+        type: String,
+        index: true
+    },
+    locationSearched: {
+        type: String
+    },
+    // --- UPDATED THIS SECTION ---
+    // We will store the actual, direct job links from the API
+    jobLinks: [{
+        title: { type: String },
+        company_name: { type: String },
+        url: { type: String },
+        snippet: { type: String }
+    }],
+    // --- END UPDATE ---
     projects: [{
         _id: {
             type: Schema.Types.ObjectId,
@@ -28,4 +48,3 @@ const AnalysisSchema = new Schema({
 });
 
 module.exports = mongoose.model('analysis', AnalysisSchema);
-

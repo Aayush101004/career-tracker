@@ -19,6 +19,14 @@ const UserSchema = new Schema({
         type: String,
         enum: ['male', 'female', 'other']
     },
+    country: {
+        type: String,
+        default: '',
+    },
+    state: {
+        type: String,
+        default: '',
+    },
     analyzedCareer: {
         type: String
     },
