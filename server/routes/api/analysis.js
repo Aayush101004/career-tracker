@@ -156,7 +156,7 @@ router.post('/career', auth, async (req, res) => {
     }
 });
 
-// GET /api/analysis/history (No changes needed)
+// GET /api/analysis/history
 router.get('/history', auth, async (req, res) => {
     try {
         const analyses = await Analysis.find({ user: req.user.id })
@@ -167,5 +167,37 @@ router.get('/history', auth, async (req, res) => {
         res.status(500).send('Server Error');
     }
 });
+
+// --- THIS IS THE MISSING ROUTE ---
+// @route   DELETE api/analysis/history/:id
+// @desc    Delete an analysis by ID
+// @access  Private
+router.delete('/history/:id', auth, async (req, res) => {
+    try {
+        const analysis = await Analysis.findById(req.params.id);
+
+        // Check if analysis exists
+        if (!analysis) {
+            return res.status(404).json({ msg: 'Analysis not found' });
+        }
+
+        // Check if user owns the analysis
+        if (analysis.user.toString() !== req.user.id) {
+            return res.status(401).json({ msg: 'User not authorized' });
+        }
+
+        // Delete the analysis
+        await analysis.deleteOne(); // Use deleteOne() on the document
+
+        res.json({ msg: 'Analysis removed' });
+    } catch (err) {
+        console.error(err.message);
+        if (err.kind === 'ObjectId') {
+            return res.status(404).json({ msg: 'Analysis not found' });
+        }
+        res.status(500).send('Server Error');
+    }
+});
+// --- END NEW DELETE ROUTE ---
 
 module.exports = router;

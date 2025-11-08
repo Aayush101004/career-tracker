@@ -7,8 +7,10 @@ import ProjectList from './ProjectList';
 const MainTracker = ({ fetchUserData }) => {
     const [projects, setProjects] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [analysisResult, setAnalysisResult] = useState(null); // Changed initial state to null
-    const [notification, setNotification] = useState('');
+    const [analysisResult, setAnalysisResult] = useState(null);
+
+    // Removed setNotification as it's not used
+    const [notification] = useState('');
 
     // New state for loading messages
     const [analysisStatus, setAnalysisStatus] = useState('');
@@ -29,7 +31,7 @@ const MainTracker = ({ fetchUserData }) => {
     const handleAnalysis = async () => {
         setIsLoading(true);
         setAnalysisResult(null);
-        setAnalysisStatus('Analyzing technologies...'); // Initial status
+        setAnalysisStatus('Analyzing your projects...'); // 1. Initial status
 
         // 1. Combine all technologies from all projects
         const allTechs = projects.flatMap(p => p.technologies);
@@ -49,14 +51,17 @@ const MainTracker = ({ fetchUserData }) => {
 
         try {
             // 5. Call the API endpoint
-            setAnalysisStatus('Calling AI for career suggestion...');
+            // Give a small delay so the user can read the first message
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            setAnalysisStatus('Contacting AI career advisor...'); // 2. Second status
+
             const res = await axios.post('/api/analysis/career', body, config);
 
             // 6. Set the result
-            setAnalysisStatus('Fetching relevant job openings...');
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            setAnalysisStatus('Searching for job openings...'); // 3. Third status
 
-            // Simulate a small delay if needed, or just set result
-            // In a real app, you'd get this status from backend logs
+            await new Promise(resolve => setTimeout(resolve, 1500));
             setAnalysisResult(res.data);
             setAnalysisStatus(''); // Clear status on success
 
@@ -64,10 +69,8 @@ const MainTracker = ({ fetchUserData }) => {
             const errorMsg = err.response?.data?.msg || 'Could not analyze career path. Please try again.';
             console.error(err.response ? err.response.data : err.message);
 
-            // --- THIS IS THE FIX ---
             // Set an error OBJECT, not a string
             setAnalysisResult({ error: errorMsg });
-            // -----------------------
 
             setAnalysisStatus(''); // Clear status on error
         } finally {

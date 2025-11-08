@@ -1,6 +1,9 @@
+// client/src/App.js
+
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
-import { Fragment, useEffect, useState } from 'react';
+// Import useCallback
+import { Fragment, useCallback, useEffect, useState } from 'react';
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
 import HomePage from './components/HomePage';
@@ -33,7 +36,34 @@ function App() {
   // This will now also hold the detailed user data for the profile page
   const [userData, setUserData] = useState(null);
 
-  const loadUser = () => {
+  // Wrap logout in useCallback
+  const logout = useCallback(() => {
+    // Use sessionStorage here to clear the token on logout
+    sessionStorage.removeItem('token');
+    setAuthToken(null);
+    setAuth({
+      token: null,
+      isAuthenticated: false,
+      loading: false,
+      user: null
+    });
+    setUserData(null);
+  }, []); // Empty deps, as setAuth/setUserData are stable
+
+  // Wrap fetchUserData in useCallback
+  const fetchUserData = useCallback(async () => {
+    if (sessionStorage.getItem('token')) {
+      try {
+        const res = await axios.get('/api/users/me');
+        setUserData(res.data);
+      } catch (err) {
+        console.error("Could not fetch user data", err);
+      }
+    }
+  }, []); // Empty deps, as setUserData is stable
+
+  // Wrap loadUser in useCallback
+  const loadUser = useCallback(() => {
     // Use sessionStorage here as well
     const token = sessionStorage.getItem('token');
     if (token) {
@@ -58,41 +88,16 @@ function App() {
         user: null
       });
     }
-  };
-
-  // Central function to fetch user data
-  const fetchUserData = async () => {
-    if (sessionStorage.getItem('token')) {
-      try {
-        const res = await axios.get('/api/users/me');
-        setUserData(res.data);
-      } catch (err) {
-        console.error("Could not fetch user data", err);
-      }
-    }
-  };
-
+  }, [fetchUserData, logout]); // Add functions it depends on
 
   useEffect(() => {
     loadUser();
-  }, []);
+  }, [loadUser]); // Add loadUser to the dependency array
 
   const loginSuccess = () => {
     loadUser();
   };
 
-  const logout = () => {
-    // Use sessionStorage here to clear the token on logout
-    sessionStorage.removeItem('token');
-    setAuthToken(null);
-    setAuth({
-      token: null,
-      isAuthenticated: false,
-      loading: false,
-      user: null
-    });
-    setUserData(null);
-  };
 
   return (
     <Router>
@@ -133,4 +138,3 @@ function App() {
 }
 
 export default App;
-

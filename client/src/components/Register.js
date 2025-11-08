@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { useState } from 'react';
 import { FaSpinner } from 'react-icons/fa'; // Import the spinner icon
-import { Link, useNavigate } from 'react-router-dom';
+// Remove useNavigate from imports
+import { Link } from 'react-router-dom';
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -16,7 +17,10 @@ const Register = () => {
 
     const [notification, setNotification] = useState({ message: '', type: '' });
     const [loading, setLoading] = useState(false); // Add loading state
-    const navigate = useNavigate();
+
+    // Remove the unused navigate variable
+    // const navigate = useNavigate();
+
     const { name, email, password, password2, gender, country, state } = formData;
 
     const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -33,7 +37,7 @@ const Register = () => {
         }
 
         try {
-            // Include all form fields in the body
+            // UPDATED: Include all fields in the body
             const body = { name, email, password, gender, country, state };
 
             // Clean up optional fields
@@ -41,11 +45,11 @@ const Register = () => {
             if (!country) delete body.country;
             if (!state) delete body.state;
 
-
             await axios.post('/api/auth/register', body);
 
             setNotification({ message: 'User registered successfully!', type: 'success' });
-            // Clear all fields on success
+
+            // UPDATED: Clear all fields on success
             setFormData({ name: '', email: '', password: '', password2: '', gender: '', country: '', state: '' });
 
         } catch (err) {
@@ -110,6 +114,7 @@ const Register = () => {
                 />
 
                 <div className="form-group">
+                    {/* UPDATED: Added (Optional) to label */}
                     <label htmlFor="gender">Gender (Optional)</label>
                     <select name="gender" value={gender} onChange={onChange}>
                         <option value="">-- Select an option --</option>

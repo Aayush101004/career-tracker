@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { FaAngleDown, FaEdit, FaSpinner, FaTimes } from 'react-icons/fa';
+// Import FaTrash for the delete icon
+import { FaAngleDown, FaEdit, FaSpinner, FaTimes, FaTrash } from 'react-icons/fa';
 
 const ProfilePage = ({ userData, loading }) => {
     // State for the main profile data display
@@ -21,6 +22,20 @@ const ProfilePage = ({ userData, loading }) => {
 
     // Project Accordion State
     const [expandedProjects, setExpandedProjects] = useState([]);
+
+    // --- NEW STATE FOR MODAL AND TOAST ---
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState({ show: false, id: null });
+    const [toast, setToast] = useState({ show: false, message: '', type: '' });
+
+    // Helper to show a toast message
+    const showToast = (message, type = 'success') => {
+        setToast({ show: true, message, type });
+        setTimeout(() => {
+            setToast({ show: false, message: '', type: '' });
+        }, 3000); // Hide after 3 seconds
+    };
+    // --- END NEW STATE ---
+
 
     // Pre-fill profile state and edit form state when userData loads
     useEffect(() => {
@@ -62,10 +77,10 @@ const ProfilePage = ({ userData, loading }) => {
         setIsChangingPassword(true);
         try {
             await axios.post('/api/users/change-password', passwordData);
-            alert('Password changed successfully!');
+            showToast('Password changed successfully!'); // Use toast
             setPasswordData({ currentPassword: '', newPassword: '' });
         } catch (err) {
-            alert('Failed to change password. Please check your current password.');
+            showToast('Failed to change password. Please check your current password.', 'error'); // Use toast
             console.error(err);
         } finally {
             setIsChangingPassword(false);
@@ -80,10 +95,10 @@ const ProfilePage = ({ userData, loading }) => {
             // Update the profile state with the new user data from the API
             setProfile(res.data);
             setEditMode(false);
-            alert('Profile updated successfully!');
+            showToast('Profile updated successfully!'); // Use toast
         } catch (err) {
             const errorMsg = err.response?.data?.errors?.[0]?.msg || 'Failed to update profile.';
-            alert(errorMsg);
+            showToast(errorMsg, 'error'); // Use toast
             console.error(err);
         } finally {
             setIsSaving(false);
@@ -103,11 +118,42 @@ const ProfilePage = ({ userData, loading }) => {
         }
     };
 
+    // --- UPDATED DELETE HANDLER ---
+    // This just shows the confirmation modal
+    const handleDeleteAnalysis = (id) => {
+        setShowDeleteConfirm({ show: true, id: id });
+    };
+
+    // This runs when the user clicks "Yes, Delete"
+    const confirmDelete = async () => {
+        const idToDelete = showDeleteConfirm.id;
+        if (!idToDelete) return;
+
+        try {
+            await axios.delete(`/api/analysis/history/${idToDelete}`);
+            // Remove the analysis from state to update the UI
+            setAnalyses(prevAnalyses => prevAnalyses.filter(a => a._id !== idToDelete));
+            showToast('Analysis deleted successfully');
+        } catch (err) {
+            console.error('Failed to delete analysis', err);
+            showToast('Could not delete analysis. Please try again.', 'error');
+        } finally {
+            // Hide the modal
+            setShowDeleteConfirm({ show: false, id: null });
+        }
+    };
+
+    // This runs when the user clicks "Cancel"
+    const cancelDelete = () => {
+        setShowDeleteConfirm({ show: false, id: null });
+    };
+    // --- END UPDATED DELETE HANDLER ---
+
     if (loading || !profile) {
         return <div style={{ color: 'white', textAlign: 'center', paddingTop: '50px' }}>Loading Profile...</div>;
     }
 
-    const { projects } = userData;
+    const { projects } = userData; //
 
     return (
         <div
@@ -118,6 +164,31 @@ const ProfilePage = ({ userData, loading }) => {
                 minHeight: '100vh'
             }}
         >
+            {/* --- NEW TOAST COMPONENT --- */}
+            {toast.show && (
+                <div className={`toast-notification ${toast.type}`}>
+                    {toast.message}
+                </div>
+            )}
+
+            {/* --- NEW CONFIRMATION MODAL --- */}
+            {showDeleteConfirm.show && (
+                <div className="confirm-modal-overlay">
+                    <div className="confirm-modal">
+                        <h4>Confirm Deletion</h4>
+                        <p>Are you sure you want to delete this analysis? This action cannot be undone.</p>
+                        <div className="confirm-modal-actions">
+                            <button onClick={cancelDelete} className="modal-btn-cancel">
+                                Cancel
+                            </button>
+                            <button onClick={confirmDelete} className="modal-btn-delete">
+                                Yes, Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <h2>My Profile</h2>
             <div className="profile-section">
                 <div className="profile-section-header">
@@ -176,9 +247,23 @@ const ProfilePage = ({ userData, loading }) => {
                     <div className="analysis-history-container">
                         {analyses.map(analysis => (
                             <div key={analysis._id} className="analysis-card">
-                                <h4>
-                                    Suggested Career: <span className="career-path-highlight">{analysis.careerPath}</span>
+                                {/* --- HEADER AND DELETE BUTTON MOVED --- */}
+                                <button
+                                    className="delete-analysis-btn"
+                                    onClick={() => handleDeleteAnalysis(analysis._id)}
+                                    title="Delete this analysis"
+                                >
+                                    <FaTrash />
+                                </button>
+                                <br />
+                                <br />
+                                <h4 className="analysis-card-header">
+                                    <span>
+                                        Suggested Career: <span className="career-path-highlight">{analysis.careerPath}</span>
+                                    </span>
                                 </h4>
+                                {/* --- END OF HEADER --- */}
+
                                 <p className="analysis-reasoning">{analysis.reasoning}</p>
                                 <p><strong>Analyzed On:</strong> {new Date(analysis.createdAt).toLocaleDateString()}</p>
                                 <p><strong>Projects Analyzed:</strong></p>

@@ -26,15 +26,15 @@ const snippetStyle = {
 const loadingContainerStyle = {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: '10px', // Space between spinner and text
-    marginTop: '1rem'
+    gap: '6px', // Reduced space between spinner and text
+    marginTop: '0.6rem',
+    justifyContent: 'center'
 };
 
 const loadingTextStyle = {
     color: '#00BFFF',
     /* Light text color */
-    fontSize: '1rem',
+    fontSize: '0.95rem',
     fontStyle: 'italic',
     margin: 0
 };
@@ -61,8 +61,8 @@ function CareerAnalysis({ projects, handleAnalysis, analysisResult, isLoading, a
             {/* --- UPDATED LOADING INDICATOR --- */}
             {isLoading && (
                 <div style={loadingContainerStyle}>
-                    <FaSpinner className="spinner" />
                     <span style={loadingTextStyle}>{analysisStatus || 'Loading...'}</span>
+                    <FaSpinner className="spinner" size={14} />
                 </div>
             )}
 

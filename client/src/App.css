@@ -687,8 +687,11 @@ select:focus {
 
 .spinner {
   animation: spin 1s linear infinite;
-  /* Ensures the spinner is centered inside the button */
-  margin: 0 auto;
+  /* make the icon smaller and inline with text */
+  font-size: 14px;
+  margin: 0;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 @keyframes spin {
@@ -1476,8 +1479,8 @@ select:focus {
 }
 
 /* * This makes both buttons in that container
- * take up equal space if they wrap
- */
+ * take up equal space if they wrap
+ */
 .profile-edit-form .form-actions button {
   flex-grow: 1;
   flex-basis: 120px;
@@ -1485,8 +1488,8 @@ select:focus {
 }
 
 /*
- * Optional: Style for the cancel button to make it less prominent
- */
+ * Optional: Style for the cancel button to make it less prominent
+ */
 .profile-edit-form .cancel-btn {
   background-color: #4A5568;
   /* A gray color */
@@ -1497,32 +1500,199 @@ select:focus {
   background-color: #718096;
 }
 
+/*
+=================================
+Career Analysis Loading Indicator (Update)
+=================================
+*/
+
 .loading-container {
   display: flex;
+  color: #00BFFF;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  /* Space between spinner and text */
+  gap: 5px;
+  /* MODIFIED: Reduced space from 8px to 5px */
   margin-top: 1.5rem;
-  /* Space below the "Analyzing..." button */
   padding: 1rem;
 }
 
 /*
- * This styles the <FaSpinner /> icon itself.
- * We make it bigger and color it blue.
- */
-.spinner {
-  font-size: 1.5rem;
-  /* Makes the icon larger (24px) */
-  color: #00BFFF;
-  /* Bright blue accent color */
-  animation: spin 1s linear infinite;
+=================================
+Profile Page Analysis Card (Updates)
+=================================
+*/
+
+.analysis-card {
+  /* This is crucial for positioning the delete button */
+  position: relative;
+
+  /* Add existing styles back if you remove them from ProfilePage.js */
+  background-color: #2D3748;
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 1rem;
+  border: 1px solid #4A5568;
 }
 
-/* * This is the animation. Make sure you have this 
- * in your CSS file for the spinner to rotate.
- */
+/* NEW: Style for the header to make button alignment easy */
+.analysis-card-header {
+  display: flex;
+  align-items: center;
+  margin-top: 0;
+}
+
+/* UPDATED: Delete Button Styling */
+.delete-analysis-btn {
+  /* Remove absolute positioning */
+  background: transparent;
+  border: none;
+  color: #9aabb4;
+  /* Muted color */
+  font-size: 0.9rem;
+  /* Make it subtle */
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  transition: all 0.2s ease-in-out;
+  margin-left: 10px;
+  /* Space it from the text */
+  line-height: 1;
+  /* Helps with alignment */
+}
+
+.delete-analysis-btn:hover {
+  color: #E53E3E;
+  /* Red on hover */
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/*
+=================================
+NEW: Custom Modal & Toast Styles
+=================================
+*/
+
+/* --- Confirmation Modal --- */
+.confirm-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.confirm-modal {
+  background-color: #2D3748;
+  color: #e2e8f0;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid #4A5568;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+}
+
+.confirm-modal h4 {
+  margin-top: 0;
+  color: #FFF;
+}
+
+.confirm-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.confirm-modal-actions button {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.modal-btn-cancel {
+  background-color: #4A5568;
+  color: #FFF;
+}
+
+.modal-btn-cancel:hover {
+  background-color: #718096;
+}
+
+.modal-btn-delete {
+  background-color: #E53E3E;
+  color: #FFF;
+}
+
+.modal-btn-delete:hover {
+  background-color: #C53030;
+}
+
+/* --- Toast Notification --- */
+.toast-notification {
+  position: fixed;
+  top: 80px;
+  /* Below the navbar */
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  color: #FFF;
+  font-weight: bold;
+  z-index: 1001;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+  animation: fadeInOut 3s ease-in-out;
+}
+
+.toast-notification.success {
+  background-color: #38A169;
+  /* Green */
+}
+
+.toast-notification.error {
+  background-color: #E53E3E;
+  /* Red */
+}
+
+@keyframes fadeInOut {
+  0% {
+    top: -100px;
+    opacity: 0;
+  }
+
+  15% {
+    top: 80px;
+    opacity: 1;
+  }
+
+  85% {
+    top: 80px;
+    opacity: 1;
+  }
+
+  100% {
+    top: -100px;
+    opacity: 0;
+  }
+}
+
+
+/* * This is the spinner animation, if you don't have it already.
+ */
+.spinner {
+  color: #00BFFF;
+  animation: spin 1s linear infinite;
+
+}
+
 @keyframes spin {
   from {
     transform: rotate(0deg);
