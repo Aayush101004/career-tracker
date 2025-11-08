@@ -1464,3 +1464,71 @@ select:focus {
   margin-top: 0.25rem;
   margin-bottom: 0;
 }
+
+.profile-edit-form .form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  /* Allows buttons to wrap on small screens */
+  gap: 1rem;
+  /* This adds 1rem (16px) of space between the buttons */
+  margin-top: 1rem;
+  /* Adds some space above the buttons */
+}
+
+/* * This makes both buttons in that container
+ * take up equal space if they wrap
+ */
+.profile-edit-form .form-actions button {
+  flex-grow: 1;
+  flex-basis: 120px;
+  /* Ensures buttons have a minimum width */
+}
+
+/*
+ * Optional: Style for the cancel button to make it less prominent
+ */
+.profile-edit-form .cancel-btn {
+  background-color: #4A5568;
+  /* A gray color */
+  border: 1px solid #718096;
+}
+
+.profile-edit-form .cancel-btn:hover {
+  background-color: #718096;
+}
+
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  /* Space between spinner and text */
+  margin-top: 1.5rem;
+  /* Space below the "Analyzing..." button */
+  padding: 1rem;
+}
+
+/*
+ * This styles the <FaSpinner /> icon itself.
+ * We make it bigger and color it blue.
+ */
+.spinner {
+  font-size: 1.5rem;
+  /* Makes the icon larger (24px) */
+  color: #00BFFF;
+  /* Bright blue accent color */
+  animation: spin 1s linear infinite;
+}
+
+/* * This is the animation. Make sure you have this 
+ * in your CSS file for the spinner to rotate.
+ */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}

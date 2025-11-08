@@ -33,15 +33,20 @@ const Register = () => {
         }
 
         try {
-            const body = { name, email, password };
-            if (gender) {
-                body.gender = gender;
-            }
+            // Include all form fields in the body
+            const body = { name, email, password, gender, country, state };
+
+            // Clean up optional fields
+            if (!gender) delete body.gender;
+            if (!country) delete body.country;
+            if (!state) delete body.state;
+
 
             await axios.post('/api/auth/register', body);
 
             setNotification({ message: 'User registered successfully!', type: 'success' });
-            setFormData({ name: '', email: '', password: '', password2: '', gender: '' });
+            // Clear all fields on success
+            setFormData({ name: '', email: '', password: '', password2: '', gender: '', country: '', state: '' });
 
         } catch (err) {
             const errorMsg = err.response?.data?.errors?.[0]?.msg || 'User may already exist.';
@@ -105,9 +110,9 @@ const Register = () => {
                 />
 
                 <div className="form-group">
-                    <label htmlFor="gender">Gender</label>
+                    <label htmlFor="gender">Gender (Optional)</label>
                     <select name="gender" value={gender} onChange={onChange}>
-                        <option value="" disabled>-- Select an option --</option>
+                        <option value="">-- Select an option --</option>
                         <option value="male">Male</option>
                         <option value="female">Female</option>
                         <option value="other">Rather not say</option>
@@ -137,4 +142,3 @@ const Register = () => {
 };
 
 export default Register;
-

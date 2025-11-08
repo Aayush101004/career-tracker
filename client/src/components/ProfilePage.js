@@ -1,32 +1,41 @@
-// client/src/components/ProfilePage.js
-
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { FaAngleDown } from 'react-icons/fa';
+import { FaAngleDown, FaEdit, FaSpinner, FaTimes } from 'react-icons/fa';
 
 const ProfilePage = ({ userData, loading }) => {
-    const [expandedProjects, setExpandedProjects] = useState([]);
+    // State for the main profile data display
+    const [profile, setProfile] = useState(null);
+
+    // State for the edit form
+    const [editMode, setEditMode] = useState(false);
+    const [formData, setFormData] = useState({ name: '', email: '', country: '', state: '' });
+    const [isSaving, setIsSaving] = useState(false);
+
+    // State for password form
     const [passwordData, setPasswordData] = useState({ currentPassword: '', newPassword: '' });
+    const [isChangingPassword, setIsChangingPassword] = useState(false);
+
+    // State for analysis history
     const [analyses, setAnalyses] = useState([]);
     const [loadingHistory, setLoadingHistory] = useState(true);
 
-    const toggleProject = (id) => {
-        setExpandedProjects(prev => prev.includes(id) ? prev.filter(pId => pId !== id) : [...prev, id]);
-    };
-    const onPasswordChange = (e) => setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
+    // Project Accordion State
+    const [expandedProjects, setExpandedProjects] = useState([]);
 
-    const onPasswordSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await axios.post('/api/users/change-password', passwordData);
-            alert('Password changed successfully!');
-            setPasswordData({ currentPassword: '', newPassword: '' });
-        } catch (err) {
-            alert('Failed to change password. Please check your current password.');
-            console.error(err);
+    // Pre-fill profile state and edit form state when userData loads
+    useEffect(() => {
+        if (userData?.user) {
+            setProfile(userData.user);
+            setFormData({
+                name: userData.user.name || '',
+                email: userData.user.email || '',
+                country: userData.user.country || '',
+                state: userData.user.state || ''
+            });
         }
-    };
+    }, [userData]);
 
+    // Fetch analysis history
     useEffect(() => {
         const fetchAnalysisHistory = async () => {
             try {
@@ -38,19 +47,67 @@ const ProfilePage = ({ userData, loading }) => {
                 setLoadingHistory(false);
             }
         };
-
         fetchAnalysisHistory();
     }, []);
 
-    if (loading) {
-        return <div>Loading Profile...</div>;
+    const toggleProject = (id) => {
+        setExpandedProjects(prev => prev.includes(id) ? prev.filter(pId => pId !== id) : [...prev, id]);
+    };
+
+    const onPasswordChange = (e) => setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
+    const onProfileChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+
+    const onPasswordSubmit = async (e) => {
+        e.preventDefault();
+        setIsChangingPassword(true);
+        try {
+            await axios.post('/api/users/change-password', passwordData);
+            alert('Password changed successfully!');
+            setPasswordData({ currentPassword: '', newPassword: '' });
+        } catch (err) {
+            alert('Failed to change password. Please check your current password.');
+            console.error(err);
+        } finally {
+            setIsChangingPassword(false);
+        }
+    };
+
+    const onProfileSubmit = async (e) => {
+        e.preventDefault();
+        setIsSaving(true);
+        try {
+            const res = await axios.put('/api/auth/profile', formData);
+            // Update the profile state with the new user data from the API
+            setProfile(res.data);
+            setEditMode(false);
+            alert('Profile updated successfully!');
+        } catch (err) {
+            const errorMsg = err.response?.data?.errors?.[0]?.msg || 'Failed to update profile.';
+            alert(errorMsg);
+            console.error(err);
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleCancelEdit = () => {
+        setEditMode(false);
+        // Reset form data to match the current profile state
+        if (profile) {
+            setFormData({
+                name: profile.name || '',
+                email: profile.email || '',
+                country: profile.country || '',
+                state: profile.state || ''
+            });
+        }
+    };
+
+    if (loading || !profile) {
+        return <div style={{ color: 'white', textAlign: 'center', paddingTop: '50px' }}>Loading Profile...</div>;
     }
 
-    if (!userData) {
-        return <div>Could not load profile data. Please try refreshing.</div>;
-    }
-
-    const { user, projects } = userData;
+    const { projects } = userData;
 
     return (
         <div
@@ -63,9 +120,50 @@ const ProfilePage = ({ userData, loading }) => {
         >
             <h2>My Profile</h2>
             <div className="profile-section">
-                <h3>Account Details</h3>
-                <p><strong>Name:</strong> {user.name}</p>
-                <p><strong>Email:</strong> {user.email}</p>
+                <div className="profile-section-header">
+                    <h3>Account Details</h3>
+                    {!editMode && (
+                        <button onClick={() => setEditMode(true)} className="edit-profile-btn">
+                            <FaEdit /> Edit
+                        </button>
+                    )}
+                </div>
+
+                {!editMode ? (
+                    <div className="profile-details-view">
+                        <p><strong>Name:</strong> {profile.name}</p>
+                        <p><strong>Email:</strong> {profile.email}</p>
+                        <p><strong>Country:</strong> {profile.country || 'Not Set'}</p>
+                        <p><strong>State/Region:</strong> {profile.state || 'Not Set'}</p>
+                    </div>
+                ) : (
+                    <form onSubmit={onProfileSubmit} className="profile-edit-form">
+                        <div className="form-group">
+                            <label>Name</label>
+                            <input type="text" name="name" value={formData.name} onChange={onProfileChange} required />
+                        </div>
+                        <div className="form-group">
+                            <label>Email</label>
+                            <input type="email" name="email" value={formData.email} onChange={onProfileChange} required />
+                        </div>
+                        <div className="form-group">
+                            <label>Country</label>
+                            <input type="text" name="country" placeholder="e.g., India, USA" value={formData.country} onChange={onProfileChange} />
+                        </div>
+                        <div className="form-group">
+                            <label>State / Region</label>
+                            <input type="text" name="state" placeholder="e.g., California, Maharashtra" value={formData.state} onChange={onProfileChange} />
+                        </div>
+                        <div className="form-actions">
+                            <button type="submit" disabled={isSaving}>
+                                {isSaving ? <FaSpinner className="spinner" /> : 'Save Changes'}
+                            </button>
+                            <button type="button" className="cancel-btn" onClick={handleCancelEdit} disabled={isSaving}>
+                                <FaTimes /> Cancel
+                            </button>
+                        </div>
+                    </form>
+                )}
             </div>
 
             <div className="profile-section">
@@ -81,13 +179,8 @@ const ProfilePage = ({ userData, loading }) => {
                                 <h4>
                                     Suggested Career: <span className="career-path-highlight">{analysis.careerPath}</span>
                                 </h4>
-
-                                {/* --- UPDATED RENDER LOGIC --- */}
                                 <p className="analysis-reasoning">{analysis.reasoning}</p>
-
-                                <p>
-                                    <strong>Analyzed On:</strong> {new Date(analysis.createdAt).toLocaleDateString()}
-                                </p>
+                                <p><strong>Analyzed On:</strong> {new Date(analysis.createdAt).toLocaleDateString()}</p>
                                 <p><strong>Projects Analyzed:</strong></p>
                                 <ul>
                                     {analysis.projects.map(project => (
@@ -95,7 +188,7 @@ const ProfilePage = ({ userData, loading }) => {
                                     ))}
                                 </ul>
 
-                                {analysis.jobLinks && analysis.jobLinks.length > 0 && (
+                                {analysis.jobLinks && analysis.jobLinks.length > 0 ? (
                                     <div className="job-links-container">
                                         <strong>Job Openings Found:</strong>
                                         <ul>
@@ -109,8 +202,9 @@ const ProfilePage = ({ userData, loading }) => {
                                             ))}
                                         </ul>
                                     </div>
+                                ) : (
+                                    <p><strong>Job Openings:</strong> No specific job openings were found for this analysis.</p>
                                 )}
-                                {/* --- END UPDATE --- */}
                             </div>
                         ))}
                     </div>
@@ -144,10 +238,12 @@ const ProfilePage = ({ userData, loading }) => {
 
             <div className="profile-section">
                 <h3>Change Password</h3>
-                <form onSubmit={onPasswordSubmit}>
+                <form onSubmit={onPasswordSubmit} className="password-change-form">
                     <input type="password" placeholder="Current Password" name="currentPassword" value={passwordData.currentPassword} onChange={onPasswordChange} required autoComplete="current-password" />
                     <input type="password" placeholder="New Password" name="newPassword" value={passwordData.newPassword} minLength="6" required autoComplete="new-password" />
-                    <button type="submit">Update Password</button>
+                    <button type="submit" disabled={isChangingPassword}>
+                        {isChangingPassword ? <FaSpinner className="spinner" /> : 'Update Password'}
+                    </button>
                 </form>
             </div>
         </div>

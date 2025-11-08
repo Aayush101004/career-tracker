@@ -27,16 +27,16 @@ router.post('/career', auth, async (req, res) => {
         // 1. Create a stable, sorted key for caching
         const uniqueTechSet = new Set(technologies.map(t => String(t).toLowerCase().trim()));
         const sortedTechs = [...uniqueTechSet].sort();
-        const technologiesKey = sortedTechs.join(', ');
 
         // --- MODIFIED: Fetch user data to get country ---
-        const user = await User.findById(req.user.id);
-        const searchCountry = user && user.country ? user.country : 'India'; // Default to India
+        const user = await User.findById(req.user.id).select('country');
+        // Use user's country, or default to 'India' if not set
+        const searchCountry = user && user.country ? user.country : 'India';
         // --- END MODIFICATION ---
 
         // 2. Check for a cached analysis
         // Note: Cache is now tied to the country as well
-        const cacheKey = `${technologiesKey}|${searchCountry}`;
+        const cacheKey = `${sortedTechs.join(', ')}|${searchCountry}`;
 
         const cachedAnalysis = await Analysis.findOne({
             user: req.user.id,
@@ -44,7 +44,7 @@ router.post('/career', auth, async (req, res) => {
         });
 
         if (cachedAnalysis) {
-            console.log('Returning cached analysis.');
+            console.log(`Returning cached analysis for ${searchCountry}.`);
             return res.json({
                 suggestedCareer: cachedAnalysis.careerPath,
                 reasoning: cachedAnalysis.reasoning,
@@ -53,7 +53,7 @@ router.post('/career', auth, async (req, res) => {
         }
 
         // 3. If no cache, call Gemini for career suggestion
-        console.log('No cache found. Calling Gemini API...');
+        console.log(`No cache found for ${cacheKey}. Calling Gemini API...`);
 
         const geminiSchema = {
             type: 'OBJECT',
@@ -69,7 +69,7 @@ router.post('/career', auth, async (req, res) => {
             Provide a brief reasoning (one sentence).
             Do NOT suggest job links or companies.
             
-            Technologies: --- ${technologiesKey} ---
+            Technologies: --- ${sortedTechs.join(', ')} ---
         `;
 
         const geminiPayload = {

@@ -1,5 +1,4 @@
-// client/src/components/careerAnalysis.js
-
+import { FaSpinner } from 'react-icons/fa'; // Import a spinner
 
 // Styles for the job links
 const jobLinkStyle = {
@@ -23,12 +22,29 @@ const snippetStyle = {
     marginBottom: '10px'
 };
 
+// New style for the loading status container
+const loadingContainerStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '10px', // Space between spinner and text
+    marginTop: '1rem'
+};
 
-function CareerAnalysis({ projects, handleAnalysis, analysisResult, isLoading }) {
-    const isButtonDisabled = projects.length < 3;
+const loadingTextStyle = {
+    color: '#00BFFF',
+    /* Light text color */
+    fontSize: '1rem',
+    fontStyle: 'italic',
+    margin: 0
+};
+
+// Pass new props: isLoading and analysisStatus
+function CareerAnalysis({ projects, handleAnalysis, analysisResult, isLoading, analysisStatus }) {
+    const isButtonDisabled = projects.length < 3 || isLoading; // Also disable when loading
     const projectsNeeded = 3 - projects.length;
 
-    const buttonTitle = isButtonDisabled
+    const buttonTitle = isButtonDisabled && projects.length < 3
         ? `Add ${projectsNeeded} more project(s) to enable analysis.`
         : 'Analyze your career path';
 
@@ -39,15 +55,23 @@ function CareerAnalysis({ projects, handleAnalysis, analysisResult, isLoading })
                 disabled={isButtonDisabled}
                 title={buttonTitle}
             >
-                Analyze Career Path
+                {isLoading ? 'Analyzing...' : 'Analyze Career Path'}
             </button>
 
-            {isLoading && <div className="loader"></div>}
+            {/* --- UPDATED LOADING INDICATOR --- */}
+            {isLoading && (
+                <div style={loadingContainerStyle}>
+                    <FaSpinner className="spinner" />
+                    <span style={loadingTextStyle}>{analysisStatus || 'Loading...'}</span>
+                </div>
+            )}
 
             {analysisResult && !isLoading && (
                 <div className="analysis-result" style={{ textAlign: 'left', maxWidth: '600px', margin: '2rem auto' }}>
+
+                    {/* This error check will NOW work correctly */}
                     {analysisResult.error ? (
-                        <p style={{ color: 'red' }}>{analysisResult.error}</p>
+                        <p style={{ color: 'red', textAlign: 'center' }}>{analysisResult.error}</p>
                     ) : (
                         <>
                             <h3>Suggested Career Path:</h3>
@@ -56,7 +80,7 @@ function CareerAnalysis({ projects, handleAnalysis, analysisResult, isLoading })
                             </p>
                             <p style={{ color: '#e2e8f0', fontStyle: 'italic' }}>{analysisResult.reasoning}</p>
 
-                            {analysisResult.jobLinks && analysisResult.jobLinks.length > 0 && (
+                            {analysisResult.jobLinks && analysisResult.jobLinks.length > 0 ? (
                                 <div style={{ marginTop: '1.5rem' }}>
                                     <h4>Current Job Openings:</h4>
                                     {analysisResult.jobLinks.map((job, index) => (
@@ -68,6 +92,12 @@ function CareerAnalysis({ projects, handleAnalysis, analysisResult, isLoading })
                                             <p style={snippetStyle}>{job.snippet}</p>
                                         </div>
                                     ))}
+                                </div>
+                            ) : (
+                                // Added this to handle cases where no jobs are found
+                                <div style={{ marginTop: '1.5rem' }}>
+                                    <h4>Current Job Openings:</h4>
+                                    <p style={{ color: '#a0aec0' }}>No job openings found for this career path in your specified country. You can update your country in the Profile page.</p>
                                 </div>
                             )}
                         </>

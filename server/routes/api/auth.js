@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { check, validationResult } = require('express-validator');
 const User = require('../../models/User');
+const auth = require('../../middleware/auth'); // Make sure auth is imported for the profile route
 
 // @route   POST api/auth/register
 // @desc    Register user
@@ -22,7 +23,8 @@ router.post(
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { name, email, password, country, state } = req.body;
+        // Destructure new fields
+        const { name, email, password, gender, country, state } = req.body;
 
         try {
             let user = await User.findOne({ email });
@@ -35,6 +37,7 @@ router.post(
                 name,
                 email,
                 password,
+                gender,  // Added
                 country, // Added
                 state    // Added
             });
@@ -103,10 +106,13 @@ router.post(
     }
 );
 
+// @route   PUT api/auth/profile
+// @desc    Update user profile
+// @access  Private
 router.put(
     '/profile',
     [
-        auth,
+        auth, // Use auth middleware
         [
             check('name', 'Name is required').not().isEmpty(),
             check('email', 'Please include a valid email').isEmail()
@@ -118,6 +124,7 @@ router.put(
             return res.status(400).json({ errors: errors.array() });
         }
 
+        // Destructure new fields
         const { name, email, country, state } = req.body;
 
         try {
@@ -137,8 +144,8 @@ router.put(
 
             user.name = name;
             user.email = email;
-            user.country = country || '';
-            user.state = state || '';
+            user.country = country || ''; // Update country
+            user.state = state || '';   // Update state
 
             await user.save();
 
@@ -154,4 +161,3 @@ router.put(
 );
 
 module.exports = router;
-

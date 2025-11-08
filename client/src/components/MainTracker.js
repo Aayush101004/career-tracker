@@ -7,8 +7,11 @@ import ProjectList from './ProjectList';
 const MainTracker = ({ fetchUserData }) => {
     const [projects, setProjects] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [analysisResult, setAnalysisResult] = useState('');
+    const [analysisResult, setAnalysisResult] = useState(null); // Changed initial state to null
     const [notification, setNotification] = useState('');
+
+    // New state for loading messages
+    const [analysisStatus, setAnalysisStatus] = useState('');
 
     const fetchProjects = async () => {
         try {
@@ -26,34 +29,47 @@ const MainTracker = ({ fetchUserData }) => {
     const handleAnalysis = async () => {
         setIsLoading(true);
         setAnalysisResult(null);
+        setAnalysisStatus('Analyzing technologies...'); // Initial status
 
         // 1. Combine all technologies from all projects
         const allTechs = projects.flatMap(p => p.technologies);
 
-        // 2. Projects to save (only id and title to keep payload small)
+        // 2. Projects to save (only id and title)
         const projectsToSave = projects.map(p => ({ _id: p._id, title: p.title }));
 
         // 3. Set up headers
         const config = {
             headers: {
                 'Content-Type': 'application/json'
-                // Auth token should be set globally by your setAuthToken util
             }
         };
 
-        // 4. Create the request body with technologies AND projects
+        // 4. Create the request body
         const body = JSON.stringify({ technologies: allTechs, projects: projectsToSave });
 
         try {
             // 5. Call the API endpoint
+            setAnalysisStatus('Calling AI for career suggestion...');
             const res = await axios.post('/api/analysis/career', body, config);
 
-            // 6. Set the result from the AI's response
+            // 6. Set the result
+            setAnalysisStatus('Fetching relevant job openings...');
+
+            // Simulate a small delay if needed, or just set result
+            // In a real app, you'd get this status from backend logs
             setAnalysisResult(res.data);
+            setAnalysisStatus(''); // Clear status on success
 
         } catch (err) {
-            console.error(err.response ? err.response.data.msg : err.message);
-            setAnalysisResult('Error: Could not analyze career path.');
+            const errorMsg = err.response?.data?.msg || 'Could not analyze career path. Please try again.';
+            console.error(err.response ? err.response.data : err.message);
+
+            // --- THIS IS THE FIX ---
+            // Set an error OBJECT, not a string
+            setAnalysisResult({ error: errorMsg });
+            // -----------------------
+
+            setAnalysisStatus(''); // Clear status on error
         } finally {
             setIsLoading(false);
         }
@@ -72,6 +88,7 @@ const MainTracker = ({ fetchUserData }) => {
                     handleAnalysis={handleAnalysis}
                     analysisResult={analysisResult}
                     isLoading={isLoading}
+                    analysisStatus={analysisStatus} // Pass the new status prop
                 />
             )}
         </>
@@ -79,4 +96,3 @@ const MainTracker = ({ fetchUserData }) => {
 };
 
 export default MainTracker;
-
