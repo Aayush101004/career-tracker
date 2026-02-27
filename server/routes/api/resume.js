@@ -9,7 +9,7 @@ const Project = require('../../models/Project');
 
 const upload = multer({ storage: multer.memoryStorage() });
 
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${process.env.GEMINI_API_KEY}`;
+const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
 
 // @route   POST api/resume/analyze
 // @desc    Analyze a resume for a specific job role

@@ -7,7 +7,7 @@ const axios = require('axios');
 const Analysis = require('../../models/Analysis');
 const User = require('../../models/User'); // <-- We need the User model
 
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${process.env.GEMINI_API_KEY}`;
+const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
 const JSEARCH_API_URL = 'https://jsearch.p.rapidapi.com/search';
 
 // @route   POST api/analysis/career
