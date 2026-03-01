@@ -10,7 +10,7 @@ const pdf = require('pdf-parse');
 const upload = multer({ storage: multer.memoryStorage() });
 
 // --- Gemini API Configuration ---
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
+const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${process.env.GEMINI_API_KEY}`;
 
 // --- GitHub API Configuration (THE FIX) ---
 // Create a headers object that includes your new GitHub token from the environment variables.
