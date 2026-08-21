@@ -191,14 +191,7 @@ const ProfilePage = ({ userData, loading }) => {
 
             <h2>My Profile</h2>
             <div className="profile-section">
-                <div className="profile-section-header">
-                    <h3>Account Details</h3>
-                    {!editMode && (
-                        <button onClick={() => setEditMode(true)} className="edit-profile-btn">
-                            <FaEdit /> Edit
-                        </button>
-                    )}
-                </div>
+                <h3>Account Details</h3>
 
                 {!editMode ? (
                     <div className="profile-details-view">
@@ -235,6 +228,14 @@ const ProfilePage = ({ userData, loading }) => {
                         </div>
                     </form>
                 )}
+
+                <div className="profile-section-header">
+                    {!editMode && (
+                        <button onClick={() => setEditMode(true)} className="edit-profile-btn">
+                            <FaEdit /> Edit
+                        </button>
+                    )}
+                </div>
             </div>
 
             <div className="profile-section">

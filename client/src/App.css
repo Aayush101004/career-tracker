@@ -806,17 +806,6 @@ select:focus {
   border-radius: 4px;
 }
 
-.project-checkbox {
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.5rem;
-}
-
-.project-checkbox input {
-  width: auto;
-  margin-right: 0.5rem;
-}
-
 .resume-preview {
   flex: 1.5;
   position: relative;
@@ -998,15 +987,71 @@ select:focus {
   border-radius: 4px;
 }
 
+/* --- Fix Checkbox Size, Padding Override, and Alignment --- */
 .project-checkbox {
   display: flex;
-  align-items: center;
-  margin-bottom: 0.5rem;
+  align-items: flex-start;
+  /* Changed to flex-start for precise vertical nudging */
+  gap: 10px;
+  margin-bottom: 12px;
 }
 
-.project-checkbox input {
-  width: auto;
-  margin-right: 0.5rem;
+/* 1. Strip native styling and forcefully override global input styles */
+.project-checkbox input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+
+  /* RESET GLOBAL INPUT STYLES THAT WERE INFLATING THE BOX */
+  width: 16px !important;
+  height: 16px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+
+  margin-top: 3px !important;
+  /* Nudges the box down to align with text */
+
+  flex-shrink: 0;
+  background-color: transparent;
+  border: 2px solid #555;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
+  transition: all 0.2s ease-in-out;
+}
+
+/* 2. Add a hover effect */
+.project-checkbox input[type="checkbox"]:hover {
+  border-color: #61dafb;
+}
+
+/* 3. Style the box when it is checked */
+.project-checkbox input[type="checkbox"]:checked {
+  background-color: #61dafb;
+  border-color: #61dafb;
+}
+
+/* 4. Recalculated checkmark dimensions for the strict 16px box */
+.project-checkbox input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 4px;
+  width: 4px;
+  height: 8px;
+  border: solid #121212;
+  /* Changed to dark text color for contrast against the blue box */
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* Ensure the label is clickable and matches the dark theme */
+.project-checkbox label {
+  cursor: pointer;
+  font-size: 1rem;
+  color: #e0e0e0;
+  line-height: 1.2;
+  user-select: none;
 }
 
 .resume-preview {

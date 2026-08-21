@@ -16,10 +16,20 @@ const ResumeModifier = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!file || !jobRole) {
+        
+        // --- NEW VALIDATION LOGIC ---
+        if (!file && !jobRole) {
             setError('Please upload a resume and provide a job role.');
             return;
+        } else if (!file && jobRole) {
+            setError('Please upload a resume file.');
+            return;
+        } else if (file && !jobRole) {
+            setError('Please provide a job role.');
+            return;
         }
+        // ----------------------------
+
         setLoading(true);
         setError('');
         setAnalysis(null);
@@ -32,7 +42,7 @@ const ResumeModifier = () => {
             const res = await axios.post('/api/resume/analyze', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
-            setAnalysis(res.data);
+            setAnalysis(res.data.data); 
             setAnalysisVisible(true);
         } catch (err) {
             setError(err.response?.data?.msg || 'Failed to analyze resume.');
@@ -48,21 +58,29 @@ const ResumeModifier = () => {
         setJobRole('');
     };
 
+    const getScoreColor = (score) => {
+        if (score >= 80) return '#4caf50'; 
+        if (score >= 60) return '#ff9800'; 
+        return '#f44336'; 
+    };
+
     return (
         <div className="resume-modifier-container">
-
             {!analysisVisible ? (
                 <>
                     <h2>Resume Modifier</h2>
                     <p>Upload your resume and paste a job description to get tailored feedback.</p>
+                    
+                    {/* The error message will render here if triggered */}
                     {error && <div className="notification error">{error}</div>}
+                    
                     <form onSubmit={handleSubmit} className="resume-form">
                         <input
                             type="text"
                             placeholder="Enter Target Job Role (e.g., Senior Frontend Developer)"
                             value={jobRole}
                             onChange={(e) => setJobRole(e.target.value)}
-                            required
+                            // Note: Removed 'required' attribute here to allow custom React validation to fire
                         />
                         <div className="file-input-container">
                             <label htmlFor="resume-input" className="file-label">
@@ -73,7 +91,7 @@ const ResumeModifier = () => {
                                 type="file"
                                 accept=".pdf"
                                 onChange={handleFileChange}
-                                required
+                                // Note: Removed 'required' attribute here as well
                             />
                         </div>
                         <button type="submit" disabled={loading}>
@@ -87,20 +105,29 @@ const ResumeModifier = () => {
                         <button onClick={handleBack} className="back-button">
                             <FaArrowLeft />
                         </button>
+                        
                         <h3>Resume Analysis</h3>
+
+                        <div style={{ textAlign: 'center', margin: '20px 0', padding: '15px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
+                            <h4 style={{ margin: '0 0 10px 0', color: '#333' }}>Simulated ATS Match</h4>
+                            <div style={{ fontSize: '3rem', fontWeight: 'bold', color: getScoreColor(analysis.atsScore) }}>
+                                {analysis.atsScore}%
+                            </div>
+                        </div>
+
                         <div className="points-columns">
                             <div className="good-points">
-                                <h4>What's good:</h4>
+                                <h4>What's good (Recruiter View):</h4>
                                 <ul>
-                                    {(analysis.goodPoints || []).map((point, index) => (
+                                    {(analysis.recruiterGoodPoints || []).map((point, index) => (
                                         <li key={index}>{point}</li>
                                     ))}
                                 </ul>
                             </div>
                             <div className="bad-points">
-                                <h4>To improve:</h4>
+                                <h4>To improve (Red Flags):</h4>
                                 <ul>
-                                    {(analysis.badPoints || []).map((point, index) => (
+                                    {(analysis.recruiterBadPoints || []).map((point, index) => (
                                         <li key={index}>{point}</li>
                                     ))}
                                 </ul>
